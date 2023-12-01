@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1085971459652",
+    "project_id": "cosc341-project-f2a4b",
+    "storage_bucket": "cosc341-project-f2a4b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1085971459652:android:044ab91fcc4fda3cf85611",
+        "android_client_info": {
+          "package_name": "com.namekept.cosc341project"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGIondoEL8H6dEm1H0hjFeGymOvp9YCM4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

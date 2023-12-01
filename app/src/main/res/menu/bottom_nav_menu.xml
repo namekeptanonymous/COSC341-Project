@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/navigation_rtd"
+        android:icon="@drawable/rtd"
+        android:title="RTD" />
+
+    <item
+        android:id="@+id/navigation_maps"
+        android:icon="@drawable/map"
+        android:title="@string/title_map" />
+
+    <item
+        android:id="@+id/navigation_sos"
+        android:icon="@drawable/sos"
+        android:title="" />
+
+    <item
+        android:id="@+id/navigation_report"
+        android:icon="@drawable/report"
+        android:title="@string/title_report" />
+
+    <item
+        android:id="@+id/navigation_community"
+        android:icon="@drawable/community"
+        android:title="Community" />
+
+</menu>
