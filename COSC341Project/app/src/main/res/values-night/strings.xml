@@ -1,7 +1,0 @@
-<resources>
-    <string name="app_name">COSC341 Project</string>
-    <string name="title_map">Map</string>
-    <string name="title_report">Report</string>
-    <string name="title_settings">Settings</string>
-    <string name="theme_to_set">Light Mode</string>
-</resources>
