@@ -12,6 +12,11 @@
         <action
             android:id="@+id/action_navigation_rtd_to_navigation_maps"
             app:destination="@id/navigation_maps" />
+        <action
+            android:id="@+id/action_navigation_rtd_to_navigation_settings"
+            app:destination="@id/navigation_settings"
+            app:popUpTo="@id/navigation_rtd"
+            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -59,5 +64,8 @@
         android:id="@+id/navigation_settings"
         android:name="com.namekept.cosc341project.SettingsFragment"
         tools:layout="@layout/fragment_settings" >
+        <action
+            android:id="@+id/action_navigation_settings_to_navigation_rtd"
+            app:destination="@id/navigation_rtd" />
     </fragment>
 </navigation>
