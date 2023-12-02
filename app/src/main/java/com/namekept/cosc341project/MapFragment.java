@@ -7,35 +7,52 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
+import android.app.AlertDialog;
 import android.app.FragmentManager;
+import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MapFragment extends Fragment {
 
+    private DatabaseReference root;
+    private GoogleMap map;
+    HashMap<String, Marker> markerHashMap = new HashMap<>();
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
         @Override
         public void onMapReady(GoogleMap googleMap) {
+            map = googleMap;
             googleMap.moveCamera(CameraUpdateFactory.zoomTo(10));
-            // Add a marker in Kelowna and move the camera
-            LatLng kelowna = new LatLng(49.8801, -119.4436);
             LatLng ubco = new LatLng(49.9394, -119.3948);
-            LatLng lake_country = new LatLng(50.0537, -119.4106);
-            googleMap.addMarker(new MarkerOptions().position(kelowna).title("Kelowna"));
-            googleMap.addMarker(new MarkerOptions().position(ubco).title("UBCO"));
-            googleMap.addMarker(new MarkerOptions().position(lake_country).title("Lake Country"));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(kelowna));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLng(ubco));
         }
     };
 
@@ -47,7 +64,7 @@ public class MapFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         return view;
     }
-
+    private String pinName; private String location;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -56,23 +73,67 @@ public class MapFragment extends Fragment {
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
-        FloatingActionButton button = (FloatingActionButton) view.findViewById(R.id.floatingActionButton);
+        root = FirebaseDatabase.getInstance().getReference();
+        FloatingActionButton button = view.findViewById(R.id.floatingActionButton);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NavHostFragment.findNavController(mapFragment).navigate(R.id.action_navigation_maps_to_navigation_report);
-//                Fragment newFragment = new ReportFragment();
-//                // consider using Java coding conventions (upper first char class names!!!)
-//                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
+//                builder.setTitle("Add a Pin/Report");
 //
-//                // Replace whatever is in the fragment_container view with this fragment,
-//                // and add the transaction to the back stack
-//                transaction.replace(R.id.navigation_maps, newFragment);
-//                transaction.addToBackStack(null);
+//                final EditText nameInput = new EditText(getContext());
+//                nameInput.setInputType(InputType.TYPE_CLASS_TEXT);
+//                builder.setView(nameInput);
 //
-//                // Commit the transaction
-//                transaction.commit();
+//                builder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        pinName = nameInput.getText().toString();
+//                    }
+//                });
+//                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.cancel();
+//                    }
+//                });
+//                builder.show();
+//                root.child("56").child("Name").setValue(pinName);       // code to write to database
+//                root.child("56").child("Location").setValue("49.9537,-119");
+
+                 NavHostFragment.findNavController(mapFragment).navigate(R.id.action_navigation_maps_to_navigation_report);
             }
+        });
+
+        root.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String previousChildName) {
+                String postName = dataSnapshot.child("Name").getValue(String.class);
+                String coordsString = dataSnapshot.child("Location").getValue(String.class);
+                if (coordsString==null) return;
+                String[] coords = coordsString.split(",");
+                LatLng postCoords = new LatLng(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
+                Marker addedMarker = map.addMarker(new MarkerOptions().position(postCoords).title(postName));
+                markerHashMap.put(postName, addedMarker);
+                Log.d("Firebase", "markerHashMap: " + markerHashMap.toString());
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                Log.d("Firebase", "am removinh!!!!!!!");
+                String postName = snapshot.child("Name").getValue(String.class);
+                Marker removedMarker = markerHashMap.get(postName);
+                if (removedMarker!=null) removedMarker.remove();
+                markerHashMap.remove(postName);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.e("Firebase", "Error: " + databaseError.getMessage());
+            }
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
         });
     }
 }
