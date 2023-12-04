@@ -107,7 +107,7 @@ public class AddPostFragment extends Fragment {
                 }                                                                              // TODO: Make it so that requests have a verification value of -1. (not possible value)
                 root.child(id+"").child("user").setValue(0);                // Placeholder since we don't have a user system ready.
                 root.child(id+"").child("content").setValue(content);
-                root.child(id+"").child("location").setValue("140,140");    // TODO: change when actual location is ready
+                root.child(id+"").child("location").setValue("50,50");    // TODO: change when actual location is ready
                 root.child(id+"").child("verifications").setValue(0);
                 Toast.makeText(getContext(), "The report was successfully added! Please refresh the map to see it.", Toast.LENGTH_SHORT).show();
                 FragmentManager fragmentManager = getParentFragmentManager();

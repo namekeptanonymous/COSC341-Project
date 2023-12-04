@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -32,6 +33,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class MapFragment extends Fragment {
@@ -39,6 +41,7 @@ public class MapFragment extends Fragment {
     private DatabaseReference root;
 
     private GoogleMap map;
+    private Marker selectedMarker;
     private View fragmentView;
     HashMap<String, Marker> markerHashMap = new HashMap<>();
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
@@ -54,6 +57,7 @@ public class MapFragment extends Fragment {
                 @Override
                 public boolean onMarkerClick(Marker m) {
                     Log.d("test", "clicked a merker!");
+                    selectedMarker = m;
                     FloatingActionButton delete = fragmentView.findViewById(R.id.deleteButton);
                     delete.setVisibility(View.VISIBLE);
 
@@ -65,6 +69,7 @@ public class MapFragment extends Fragment {
             googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
                 @Override
                 public void onMapClick(LatLng latLng) {
+                    selectedMarker = null;
                     FloatingActionButton delete = fragmentView.findViewById(R.id.deleteButton);
                     delete.setVisibility(View.INVISIBLE);
                 }
@@ -132,10 +137,10 @@ public class MapFragment extends Fragment {
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
                 Log.d("Firebase", "am removinh!!!!!!!");
-                String postName = snapshot.child("Name").getValue(String.class);
-                Marker removedMarker = markerHashMap.get(postName);
+                String postId = snapshot.getKey();
+                Marker removedMarker = markerHashMap.get(postId);
                 if (removedMarker!=null) removedMarker.remove();
-                markerHashMap.remove(postName);
+                markerHashMap.remove(postId);
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -145,6 +150,28 @@ public class MapFragment extends Fragment {
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
             @Override
             public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
+        });
+
+        FloatingActionButton delete = fragmentView.findViewById(R.id.deleteButton);
+        delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String postId = null;
+                if (selectedMarker!=null) {
+                    for (Map.Entry<String, Marker> entry : markerHashMap.entrySet()) {
+                        if (entry.getValue().equals(selectedMarker)) {
+                            postId = entry.getKey();
+                            break;
+                        }
+                    }
+                    markerHashMap.remove(postId);
+                    root.child(postId).removeValue();
+                    selectedMarker.remove();
+                    Toast.makeText(getContext(), "The selected marker has been removed.", Toast.LENGTH_SHORT).show();
+                    FloatingActionButton delete = fragmentView.findViewById(R.id.deleteButton);
+                    delete.setVisibility(View.INVISIBLE);
+                }
+            }
         });
     }
 }
