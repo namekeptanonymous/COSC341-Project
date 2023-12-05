@@ -25,6 +25,7 @@ import java.util.Map;
 public class ViewPostFragment extends Fragment {
 
     private String postId;
+    private View fragmentView;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,14 +35,14 @@ public class ViewPostFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_r_t_d, container, false);
+        fragmentView = inflater.inflate(R.layout.fragment_view_post, container, false);
+        return fragmentView;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         postId = getArguments().getString("postId");
-        Log.d("test", postId+"");
     }
 
     private OnCompleteListener<DataSnapshot> onValuesFetched = new
@@ -56,10 +57,11 @@ public class ViewPostFragment extends Fragment {
                     }
                     else
                     {
-                        HashMap<String, HashMap<String, String>> databaseEntries = (HashMap) task.getResult().getValue();
+                        HashMap<String, HashMap<String, ?>> databaseEntries = (HashMap) task.getResult().getValue();
                         if (databaseEntries==null)
                             return;
-//                        List<Map.Entry<String, HashMap<String, *>>> indexableEntries = new ArrayList<>(databaseEntries.entrySet());
+                        List<Map.Entry<String, HashMap<String, ?>>> indexableEntries = new ArrayList<>(databaseEntries.entrySet());
+
                     }
                 }
             };
