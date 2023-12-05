@@ -53,7 +53,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
-        android:id="@+id/title"
+        android:id="@+id/screenTitle"
         style="@style/Widget.AppCompat.TextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -94,11 +94,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="40dp"
         android:text="Type"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title" />
+        app:layout_constraintTop_toBottomOf="@+id/screenTitle" />
 
     <RadioGroup
         android:id="@+id/type"
@@ -117,7 +117,7 @@
             android:layout_weight="1"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            android:text="Fire"
+            android:text="Report"
             tools:layout_editor_absoluteX="127dp"
             tools:layout_editor_absoluteY="284dp" />
 
@@ -128,8 +128,19 @@
             android:layout_weight="1"
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
-            android:text="Post/Request"
+            android:text="Accommodation"
             tools:layout_editor_absoluteX="240dp"
+            tools:layout_editor_absoluteY="284dp" />
+
+        <RadioButton
+            android:id="@+id/typeFire2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:text="Request"
+            tools:layout_editor_absoluteX="127dp"
             tools:layout_editor_absoluteY="284dp" />
     </RadioGroup>
 
@@ -152,7 +163,7 @@
             style="@style/Widget.Material3.TextInputEditText.OutlinedBox"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:lines="5" />
+            android:lines="3" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
