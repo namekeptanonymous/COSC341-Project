@@ -63,8 +63,10 @@ public class CommunityFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ArrayList<String> accArrayList = new ArrayList<String>();
-        ArrayList<String> reqArrayList = new ArrayList<String>();
+        ArrayList<String> accListTitle = new ArrayList<String>();
+        ArrayList<String> accListContent = new ArrayList<String>();
+        ArrayList<String> reqListTitle = new ArrayList<String>();
+        ArrayList<String> reqListContent = new ArrayList<String>();
         root = FirebaseDatabase.getInstance().getReference();
         root.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -79,18 +81,43 @@ public class CommunityFragment extends Fragment {
                         location = postSnapshot.child("location").getValue(String.class);
                         verifications = postSnapshot.child("verifications").getValue(Integer.class);
 
-                        if(type.equalsIgnoreCase("accomodation")){
-                            accArrayList.add(title+"\n"+content);
+                        if(type.equalsIgnoreCase("accommodation")){
+                            accListTitle.add(title);
+                            accListContent.add(content);
                         }
                         else if (type.equalsIgnoreCase("request")){
-                            reqArrayList.add(title+"\n"+content);
+                            reqListTitle.add(title);
+                            reqListContent.add(content);
                         }
                 }
-                // Do something with the first 5 posts' data
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, accArrayList);
+
+                ArrayAdapter adapter = new ArrayAdapter(requireContext(), android.R.layout.simple_list_item_2, android.R.id.text1, accListTitle) {
+                    @Override
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        View view = super.getView(position, convertView, parent);
+                        TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+                        TextView text2 = (TextView) view.findViewById(android.R.id.text2);
+
+                        text1.setText(accListTitle.get(position));
+                        text2.setText(accListContent.get(position));
+                        return view;
+                    }
+                };
                 ListView accList = view.findViewById(R.id.accomodations);
                 accList.setAdapter(adapter);
-                ArrayAdapter<String> adapter1 = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, reqArrayList);
+
+                ArrayAdapter adapter1 = new ArrayAdapter(requireContext(), android.R.layout.simple_list_item_2, android.R.id.text1, reqListTitle) {
+                    @Override
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        View view = super.getView(position, convertView, parent);
+                        TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+                        TextView text2 = (TextView) view.findViewById(android.R.id.text2);
+
+                        text1.setText(reqListTitle.get(position));
+                        text2.setText(reqListContent.get(position));
+                        return view;
+                    }
+                };
                 ListView reqList = view.findViewById(R.id.requests);
                 reqList.setAdapter(adapter1);
 
