@@ -2,10 +2,11 @@ package com.namekept.cosc341project;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
-import androidx.core.graphics.drawable.*;
 
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -56,13 +58,13 @@ public class MapFragment extends Fragment {
             googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker m) {
-                    Log.d("test", "clicked a merker!");
+                    googleMap.moveCamera(CameraUpdateFactory.newLatLng(m.getPosition()));
+                    googleMap.moveCamera(CameraUpdateFactory.zoomTo(10));
                     selectedMarker = m;
                     FloatingActionButton delete = fragmentView.findViewById(R.id.deleteButton);
+                    FloatingActionButton edit = fragmentView.findViewById(R.id.editButton);
                     delete.setVisibility(View.VISIBLE);
-
-                    // TODO: PROMPT USER TO DELETE, ARE YOU SURE? DELETE ONLY IF USER ID IS EQUAL TO CURRENT ID.
-
+                    edit.setVisibility(View.VISIBLE);
                     return false;
                 }
             });
@@ -71,7 +73,9 @@ public class MapFragment extends Fragment {
                 public void onMapClick(LatLng latLng) {
                     selectedMarker = null;
                     FloatingActionButton delete = fragmentView.findViewById(R.id.deleteButton);
+                    FloatingActionButton edit = fragmentView.findViewById(R.id.editButton);
                     delete.setVisibility(View.INVISIBLE);
+                    edit.setVisibility(View.INVISIBLE);
                 }
             });
 
@@ -97,11 +101,19 @@ public class MapFragment extends Fragment {
         }
         root = FirebaseDatabase.getInstance().getReference();
 
-        FloatingActionButton button = view.findViewById(R.id.addButton);
-        button.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton add = view.findViewById(R.id.addButton);
+        add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                  NavHostFragment.findNavController(mapFragment).navigate(R.id.action_navigation_maps_to_addPostFragment);
+            }
+        });
+
+        FloatingActionButton edit = view.findViewById(R.id.editButton);
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NavHostFragment.findNavController(mapFragment).navigate(R.id.action_navigation_maps_to_addPostFragment);
             }
         });
 
@@ -156,21 +168,39 @@ public class MapFragment extends Fragment {
         delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String postId = null;
-                if (selectedMarker!=null) {
-                    for (Map.Entry<String, Marker> entry : markerHashMap.entrySet()) {
-                        if (entry.getValue().equals(selectedMarker)) {
-                            postId = entry.getKey();
-                            break;
+                MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
+                builder.setTitle("Deleting Pin and Post");
+                builder.setMessage("Are you sure you want to delete this pin? Deleting this will also delete the post associated with it.");
+
+                // Add buttons for positive (confirm) and negative (cancel) actions
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        String postId = null;
+                        if (selectedMarker!=null) {
+                            for (Map.Entry<String, Marker> entry : markerHashMap.entrySet()) {
+                                if (entry.getValue().equals(selectedMarker)) {
+                                    postId = entry.getKey();
+                                    break;
+                                }
+                            }
+
+                            markerHashMap.remove(postId);
+                            root.child(postId).removeValue();
+                            selectedMarker.remove();
+                            Toast.makeText(getContext(), "The selected marker has been removed.", Toast.LENGTH_SHORT).show();
+                            FloatingActionButton delete = fragmentView.findViewById(R.id.deleteButton);
+                            FloatingActionButton edit = fragmentView.findViewById(R.id.editButton);
+                            delete.setVisibility(View.INVISIBLE);
+                            edit.setVisibility(View.INVISIBLE);
                         }
                     }
-                    markerHashMap.remove(postId);
-                    root.child(postId).removeValue();
-                    selectedMarker.remove();
-                    Toast.makeText(getContext(), "The selected marker has been removed.", Toast.LENGTH_SHORT).show();
-                    FloatingActionButton delete = fragmentView.findViewById(R.id.deleteButton);
-                    delete.setVisibility(View.INVISIBLE);
-                }
+                });
+
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {}
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
     }

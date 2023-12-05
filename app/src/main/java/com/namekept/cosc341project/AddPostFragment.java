@@ -1,21 +1,52 @@
 package com.namekept.cosc341project;
 
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
+import static android.content.ContentValues.TAG;
+
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Arrays;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import com.google.android.libraries.places.api.model.AutocompletePrediction;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.AutocompletePrediction;
+import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,22 +55,29 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import org.w3c.dom.Text;
+
 public class AddPostFragment extends Fragment {
 
     private DatabaseReference root;
+    private View fragmentView;
     private int id;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Places.initialize(getContext(), "AIzaSyDUgyTf_nWM_3PkLaqbzya53FlN4UWBXAQ");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_add_post, container, false);
+        fragmentView = inflater.inflate(R.layout.fragment_add_post, container, false);
+        return fragmentView;
     }
 
+
+    private double longitude; private double latitude;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -73,11 +111,14 @@ public class AddPostFragment extends Fragment {
             }
         });
 
-        Button locationButton = view.findViewById(R.id.locationButton);
-        locationButton.setOnClickListener(new View.OnClickListener() {
+        AutoCompleteTextView locationEditText = view.findViewById(R.id.location);
+        locationEditText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onClick(View viewClick) {
-                // TODO: Figure location button out.
+            public void onFocusChange(View view, boolean b) {
+                if (view.hasFocus()) {
+                    view.clearFocus();
+                    address();
+                }
 
             }
         });
@@ -89,14 +130,16 @@ public class AddPostFragment extends Fragment {
                 RadioGroup type = view.findViewById(R.id.type);
                 TextInputEditText contentField = view.findViewById(R.id.content);
                 String content = contentField.getText().toString();
-                // TODO: add location here once figured out
                 if (type.getCheckedRadioButtonId()==-1) {
                     Toast.makeText(getContext(), "Please select an option.", Toast.LENGTH_SHORT).show();
                     return;
                 } else if (content.trim().isEmpty()) {
                     Toast.makeText(getContext(), "Please enter a description.", Toast.LENGTH_SHORT).show();
                     return;
-                } // TODO: another else if to check if location was given
+                } else if (locationEditText.getText().toString().trim().isEmpty()) {
+                    Toast.makeText(getContext(), "Please enter a location.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 RadioButton selected = view.findViewById(type.getCheckedRadioButtonId());
                 root.child(id+"").child("timestamp").setValue(1);           // TODO: Set to current time and date, preferably time-zone independent.
                 if (selected.getText().equals("Fire")) {
@@ -104,20 +147,50 @@ public class AddPostFragment extends Fragment {
                 }
                 else {
                     root.child(id+"").child("type").setValue("");
-                }                                                                              // TODO: Make it so that requests have a verification value of -1. (not possible value)
+                }
                 root.child(id+"").child("user").setValue(0);                // Placeholder since we don't have a user system ready.
                 root.child(id+"").child("content").setValue(content);
-                root.child(id+"").child("location").setValue("50,50");    // TODO: change when actual location is ready
+                root.child(id+"").child("location").setValue(latitude + "," + longitude);
                 root.child(id+"").child("verifications").setValue(0);
-                Toast.makeText(getContext(), "The report was successfully added! Please refresh the map to see it.", Toast.LENGTH_SHORT).show();
+
+                Toast.makeText(getContext(), "The report was successfully added!", Toast.LENGTH_SHORT).show();
                 FragmentManager fragmentManager = getParentFragmentManager();
                 if (fragmentManager.getBackStackEntryCount() > 0) {
                     fragmentManager.popBackStack();
                 }
             }
         });
-
-
-
     }
+
+    public void address() {
+        // Set the fields to specify which types of place data to return.
+        List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.LAT_LNG);
+        // Start the autocomplete intent.
+        Intent intent = new Autocomplete.IntentBuilder(
+                AutocompleteActivityMode.OVERLAY, fields)
+                .setCountry("CA")
+                .build(requireContext());
+        startActivityForResult(intent, 1);
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                Place place = Autocomplete.getPlaceFromIntent(data);
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId() + ", " + place.getAddress());
+                AutoCompleteTextView locationEditText = fragmentView.findViewById(R.id.location);
+                locationEditText.setText(place.getAddress());
+                latitude=place.getLatLng().latitude;
+                longitude=place.getLatLng().longitude;
+
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                // TODO: Handle the error.
+                Status status = Autocomplete.getStatusFromIntent(data);
+                Log.i(TAG, status.getStatusMessage());
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
+    }
+
 }
