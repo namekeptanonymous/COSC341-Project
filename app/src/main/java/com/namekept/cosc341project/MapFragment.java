@@ -122,14 +122,19 @@ public class MapFragment extends Fragment {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String previousChildName) {
                 String postId = dataSnapshot.getKey();
                 String coordsString = dataSnapshot.child("location").getValue(String.class);
-                boolean fire = dataSnapshot.child("fire").getValue(Boolean.class);
+                DataSnapshot fireSnapshot = dataSnapshot.child("fire");
+                Boolean fire;
+                if (fireSnapshot==null)
+                    fire = false;
+                else
+                    fire = fireSnapshot.getValue(Boolean.class);
                 String title = dataSnapshot.child("title").getValue(String.class);
                 if (coordsString==null) return;
                 String[] coords = coordsString.split(",");
                 LatLng postCoords = new LatLng(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
                 Marker addedMarker;
 
-                if (fire) {
+                if (fire != null && fire) {
                     Bitmap highResBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.fire);
                     int targetWidth = 100;
                     int targetHeight = 100;
