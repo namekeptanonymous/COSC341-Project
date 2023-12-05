@@ -4,22 +4,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="80dp"
     tools:context=".ReportFragment">
 
-    <TextView
-        android:id="@+id/text_report"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="random text here"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <!-- RecyclerView for displaying the list of reports -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_view_reports"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingBottom="80dp"
+        app:layout_constraintBottom_toTopOf="@id/fab_add_report"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <!-- Floating Action Button for adding new reports, consistent with other FABs in the app -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_add_report"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/add"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Include the layout for an individual report item multiple times -->
+    <!-- Make sure to use a RecyclerView in your java code to handle the list properly
+    <include layout="@layout/report_item" android:id="@+id/report_item1" />
+    <include layout="@layout/report_item" android:id="@+id/report_item2"
+        android:visibility="gone"/> <!- Initially hidden, show programmatically
+    <include layout="@layout/report_item" android:id="@+id/report_item3"
+        android:visibility="gone"/> <!- Initially hidden, show programmatically -->
+    -->
 </androidx.constraintlayout.widget.ConstraintLayout>
