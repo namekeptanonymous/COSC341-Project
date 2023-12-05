@@ -66,9 +66,9 @@ public class MapFragment extends Fragment {
             googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker m) {
+                    selectedMarker = m;
                     googleMap.moveCamera(CameraUpdateFactory.newLatLng(m.getPosition()));
                     googleMap.moveCamera(CameraUpdateFactory.zoomTo(13));
-                    selectedMarker = m;
                     FloatingActionButton delete = fragmentView.findViewById(R.id.deleteButton);
                     FloatingActionButton viewPost = fragmentView.findViewById(R.id.viewButton);
                     delete.setVisibility(View.VISIBLE);
