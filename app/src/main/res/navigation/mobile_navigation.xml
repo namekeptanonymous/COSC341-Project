@@ -12,11 +12,6 @@
         <action
             android:id="@+id/action_navigation_rtd_to_navigation_maps"
             app:destination="@id/navigation_maps" />
-        <action
-            android:id="@+id/action_navigation_rtd_to_navigation_settings"
-            app:destination="@id/navigation_settings"
-            app:popUpTo="@id/navigation_rtd"
-            app:popUpToInclusive="true" />
     </fragment>
 
     <fragment
@@ -49,6 +44,9 @@
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
             app:popExitAnim="@anim/nav_default_pop_exit_anim" />
+        <argument
+            android:name="postId"
+            app:argType="string" />
     </fragment>
 
     <fragment
@@ -92,21 +90,13 @@
             app:enterAnim="@anim/nav_default_enter_anim"
             app:exitAnim="@anim/nav_default_exit_anim"
             app:popEnterAnim="@anim/nav_default_pop_enter_anim"
-            app:popExitAnim="@anim/nav_default_pop_exit_anim">
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" >
             <argument
                 android:name="postId"
                 app:argType="string" />
         </action>
     </fragment>
 
-    <fragment
-        android:id="@+id/navigation_settings"
-        android:name="com.namekept.cosc341project.SettingsFragment"
-        tools:layout="@layout/fragment_settings" >
-        <action
-            android:id="@+id/action_navigation_settings_to_navigation_rtd"
-            app:destination="@id/navigation_rtd" />
-    </fragment>
     <fragment
         android:id="@+id/addPostFragment"
         android:name="com.namekept.cosc341project.AddPostFragment"
@@ -120,5 +110,12 @@
         <argument
             android:name="postId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_viewPostFragment_to_navigation_maps"
+            app:destination="@id/navigation_maps"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim"
+            app:popEnterAnim="@anim/nav_default_pop_enter_anim"
+            app:popExitAnim="@anim/nav_default_pop_exit_anim" />
     </fragment>
 </navigation>

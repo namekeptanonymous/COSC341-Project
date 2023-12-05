@@ -8,6 +8,34 @@
     android:paddingBottom="80dp"
     tools:context=".ViewPostFragment">
 
+    <TextView
+        android:id="@+id/postTimestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="12dp"
+        android:drawablePadding="6dp"
+        android:text="Timestamp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="16sp"
+        app:drawableLeftCompat="@drawable/date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout3" />
+
+    <TextView
+        android:id="@+id/postVerifications"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:drawablePadding="6dp"
+        android:text="Verifications"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="16sp"
+        app:drawableLeftCompat="@drawable/verified"
+        app:layout_constraintStart_toEndOf="@+id/postTimestamp"
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout3" />
+
     <RelativeLayout
         android:id="@+id/relativeLayout3"
         android:layout_width="match_parent"
@@ -29,11 +57,15 @@
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="32dp"
         android:hint="Location"
+        android:textColorHint="@color/black"
+        app:boxStrokeColor="@color/black"
         app:helperTextEnabled="true"
+        app:helperTextTextColor="@color/black"
+        app:hintTextColor="@color/black"
         app:layout_constraintBottom_toBottomOf="@+id/relativeLayout3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -46,7 +78,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="false"
-            android:focusableInTouchMode="false" />
+            android:focusableInTouchMode="false"
+            android:textColor="@color/black" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
@@ -54,13 +87,14 @@
         style="@style/Widget.AppCompat.TextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="48dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="32dp"
         android:fontFamily="sans-serif"
         android:text="Title"
         android:textAllCaps="false"
         android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+        android:textColor="@color/black"
         android:typeface="normal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -82,9 +116,10 @@
         android:id="@+id/postType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
         android:text="Type"
+        android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/screenTitle" />
@@ -94,10 +129,14 @@
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="32dp"
         android:hint="Description"
+        android:textColorHint="@color/black"
+        app:boxStrokeColor="@color/black"
+        app:helperTextTextColor="@color/black"
+        app:hintTextColor="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/postType">
@@ -109,7 +148,9 @@
             android:layout_height="wrap_content"
             android:clickable="false"
             android:focusableInTouchMode="false"
-            android:lines="3" />
+            android:lines="3"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textColor="@color/black" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
