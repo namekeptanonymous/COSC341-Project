@@ -112,7 +112,7 @@ public class AddPostFragment extends Fragment {
                 RadioGroup type = view.findViewById(R.id.type);
                 TextInputEditText contentField = view.findViewById(R.id.content);
                 String content = contentField.getText().toString();
-                AutoCompleteTextView titleField = view.findViewById(R.id.titleTextInputLayout);
+                AutoCompleteTextView titleField = view.findViewById(R.id.title);
                 String title = titleField.getText().toString();
 
                 if (type.getCheckedRadioButtonId()==-1) {
@@ -130,15 +130,16 @@ public class AddPostFragment extends Fragment {
                 }
                 RadioButton selected = view.findViewById(type.getCheckedRadioButtonId());
                 root.child(id+"").child("content").setValue(content);
-                if (selected.getText().equals("Fire")) {
+                if (selected.getText().equals("Report")) {
                     root.child(id+"").child("fire").setValue(true);
                 }
                 else {
-                    root.child(id+"").child("type").setValue(false);
+                    root.child(id+"").child("fire").setValue(false);
                 }
                 root.child(id+"").child("location").setValue(latitude + "," + longitude);
                 root.child(id+"").child("timestamp").setValue(System.currentTimeMillis());
                 root.child(id+"").child("title").setValue(title);
+                root.child(id+"").child("type").setValue(selected.getText().toString().toLowerCase());
                 root.child(id+"").child("verifications").setValue(0);
 
                 Toast.makeText(getContext(), "The report was successfully added!", Toast.LENGTH_SHORT).show();
