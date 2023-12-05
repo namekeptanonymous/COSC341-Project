@@ -15,6 +15,10 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,8 +28,10 @@ import java.util.Map;
 
 public class ViewPostFragment extends Fragment {
 
+    private DatabaseReference root;
     private String postId;
     private View fragmentView;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,26 +49,23 @@ public class ViewPostFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         postId = getArguments().getString("postId");
-    }
+        root = FirebaseDatabase.getInstance().getReference().child(postId);
+        root.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
 
-    private OnCompleteListener<DataSnapshot> onValuesFetched = new
-            OnCompleteListener<DataSnapshot>()
-            {
-                @Override
-                public void onComplete(@NonNull Task<DataSnapshot> task)
-                {
-                    if (!task.isSuccessful())
-                    {
-                        Log.e("firebase", "Error getting data.", task.getException());
-                    }
-                    else
-                    {
-                        HashMap<String, HashMap<String, ?>> databaseEntries = (HashMap) task.getResult().getValue();
-                        if (databaseEntries==null)
-                            return;
-                        List<Map.Entry<String, HashMap<String, ?>>> indexableEntries = new ArrayList<>(databaseEntries.entrySet());
+                    Log.d("test",dataSnapshot.child("content").getValue(String.class));
 
-                    }
+                } else {
+                    // Data doesn't exist at this specific location
                 }
-            };
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle potential error while reading data
+            }
+        });
+    }
 }
