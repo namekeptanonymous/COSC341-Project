@@ -8,6 +8,34 @@
     android:paddingBottom="80dp"
     tools:context=".ViewPostFragment">
 
+    <TextView
+        android:id="@+id/postTimestamp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
+        android:drawablePadding="6dp"
+        android:text="Timestamp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="16sp"
+        app:drawableLeftCompat="@drawable/date"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout3" />
+
+    <TextView
+        android:id="@+id/postVerifications"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:drawablePadding="6dp"
+        android:text="Verifications"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+        android:textSize="16sp"
+        app:drawableLeftCompat="@drawable/verified"
+        app:layout_constraintStart_toEndOf="@+id/postTimestamp"
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout3" />
+
     <RelativeLayout
         android:id="@+id/relativeLayout3"
         android:layout_width="match_parent"

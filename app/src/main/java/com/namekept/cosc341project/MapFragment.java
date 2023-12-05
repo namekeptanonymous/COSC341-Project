@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 
 import android.content.DialogInterface;
@@ -52,20 +51,28 @@ public class MapFragment extends Fragment {
         @Override
         public void onMapReady(GoogleMap googleMap) {
             map = googleMap;
-            googleMap.moveCamera(CameraUpdateFactory.zoomTo(10));
-            LatLng ubco = new LatLng(49.9394, -119.3948);
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(ubco));
+            if (getArguments().get("coords") != null) {
+                googleMap.moveCamera(CameraUpdateFactory.zoomTo(13));
+                String[] latlng = ((String) getArguments().get("coords")).split(",");
+                LatLng pin = new LatLng(Double.parseDouble(latlng[0]), Double.parseDouble(latlng[1]));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLng(pin));
+            } else {
+                googleMap.moveCamera(CameraUpdateFactory.zoomTo(10));
+                LatLng ubco = new LatLng(49.9394, -119.3948);
+                googleMap.moveCamera(CameraUpdateFactory.newLatLng(ubco));
+            }
+
 
             googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                 @Override
                 public boolean onMarkerClick(Marker m) {
                     googleMap.moveCamera(CameraUpdateFactory.newLatLng(m.getPosition()));
-                    googleMap.moveCamera(CameraUpdateFactory.zoomTo(10));
+                    googleMap.moveCamera(CameraUpdateFactory.zoomTo(13));
                     selectedMarker = m;
                     FloatingActionButton delete = fragmentView.findViewById(R.id.deleteButton);
-                    FloatingActionButton edit = fragmentView.findViewById(R.id.editButton);
+                    FloatingActionButton viewPost = fragmentView.findViewById(R.id.viewButton);
                     delete.setVisibility(View.VISIBLE);
-                    edit.setVisibility(View.VISIBLE);
+                    viewPost.setVisibility(View.VISIBLE);
                     return false;
                 }
             });
@@ -74,9 +81,9 @@ public class MapFragment extends Fragment {
                 public void onMapClick(LatLng latLng) {
                     selectedMarker = null;
                     FloatingActionButton delete = fragmentView.findViewById(R.id.deleteButton);
-                    FloatingActionButton edit = fragmentView.findViewById(R.id.editButton);
+                    FloatingActionButton viewPost = fragmentView.findViewById(R.id.viewButton);
                     delete.setVisibility(View.INVISIBLE);
-                    edit.setVisibility(View.INVISIBLE);
+                    viewPost.setVisibility(View.INVISIBLE);
                 }
             });
 
@@ -100,22 +107,23 @@ public class MapFragment extends Fragment {
         if (mapFragment != null) {
             mapFragment.getMapAsync(callback);
         }
+
         root = FirebaseDatabase.getInstance().getReference();
 
         FloatingActionButton add = view.findViewById(R.id.addButton);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                 NavHostFragment.findNavController(mapFragment).navigate(R.id.action_navigation_maps_to_addPostFragment);
+                NavHostFragment.findNavController(mapFragment).navigate(R.id.action_navigation_maps_to_addPostFragment);
             }
         });
 
-        FloatingActionButton edit = view.findViewById(R.id.editButton);
-        edit.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton viewPost = view.findViewById(R.id.viewButton);
+        viewPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String postId = "";
-                if (selectedMarker!=null) {
+                if (selectedMarker != null) {
                     for (Map.Entry<String, Marker> entry : markerHashMap.entrySet()) {
                         if (entry.getValue().equals(selectedMarker)) {
                             postId = entry.getKey();
@@ -136,12 +144,12 @@ public class MapFragment extends Fragment {
                 String coordsString = dataSnapshot.child("location").getValue(String.class);
                 DataSnapshot fireSnapshot = dataSnapshot.child("fire");
                 Boolean fire;
-                if (fireSnapshot==null)
+                if (fireSnapshot == null)
                     fire = false;
                 else
                     fire = fireSnapshot.getValue(Boolean.class);
                 String title = dataSnapshot.child("title").getValue(String.class);
-                if (coordsString==null) return;
+                if (coordsString == null) return;
                 String[] coords = coordsString.split(",");
                 LatLng postCoords = new LatLng(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
                 Marker addedMarker;
@@ -165,17 +173,22 @@ public class MapFragment extends Fragment {
                 Log.d("Firebase", "am removinh!!!!!!!");
                 String postId = snapshot.getKey();
                 Marker removedMarker = markerHashMap.get(postId);
-                if (removedMarker!=null) removedMarker.remove();
+                if (removedMarker != null) removedMarker.remove();
                 markerHashMap.remove(postId);
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e("Firebase", "Error: " + databaseError.getMessage());
             }
+
             @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            }
+
             @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            }
         });
 
         FloatingActionButton delete = fragmentView.findViewById(R.id.deleteButton);
@@ -190,7 +203,7 @@ public class MapFragment extends Fragment {
                 builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         String postId = null;
-                        if (selectedMarker!=null) {
+                        if (selectedMarker != null) {
                             for (Map.Entry<String, Marker> entry : markerHashMap.entrySet()) {
                                 if (entry.getValue().equals(selectedMarker)) {
                                     postId = entry.getKey();
@@ -198,20 +211,24 @@ public class MapFragment extends Fragment {
                                 }
                             }
 
-                            markerHashMap.remove(postId);
-                            root.child(postId).removeValue();
+
+                            if (postId != null) {
+                                markerHashMap.remove(postId);
+                                root.child(postId).removeValue();
+                            }
                             selectedMarker.remove();
                             Toast.makeText(getContext(), "The selected marker has been removed.", Toast.LENGTH_SHORT).show();
                             FloatingActionButton delete = fragmentView.findViewById(R.id.deleteButton);
-                            FloatingActionButton edit = fragmentView.findViewById(R.id.editButton);
+                            FloatingActionButton viewPost = fragmentView.findViewById(R.id.viewButton);
                             delete.setVisibility(View.INVISIBLE);
-                            edit.setVisibility(View.INVISIBLE);
+                            viewPost.setVisibility(View.INVISIBLE);
                         }
                     }
                 });
 
                 builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {}
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
                 });
                 AlertDialog dialog = builder.create();
                 dialog.show();
