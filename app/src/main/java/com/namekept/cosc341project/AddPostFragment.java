@@ -4,48 +4,32 @@ import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static android.content.ContentValues.TAG;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Arrays;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import com.google.android.libraries.places.api.model.AutocompletePrediction;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.AutocompletePrediction;
-import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.TypeFilter;
-import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.database.DataSnapshot;
@@ -54,8 +38,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
 
 public class AddPostFragment extends Fragment {
 
@@ -130,8 +112,14 @@ public class AddPostFragment extends Fragment {
                 RadioGroup type = view.findViewById(R.id.type);
                 TextInputEditText contentField = view.findViewById(R.id.content);
                 String content = contentField.getText().toString();
+                AutoCompleteTextView titleField = view.findViewById(R.id.titleTextInputLayout);
+                String title = titleField.getText().toString();
+
                 if (type.getCheckedRadioButtonId()==-1) {
                     Toast.makeText(getContext(), "Please select an option.", Toast.LENGTH_SHORT).show();
+                    return;
+                } else if (title.trim().isEmpty()) {
+                    Toast.makeText(getContext(), "Please enter a title.", Toast.LENGTH_SHORT).show();
                     return;
                 } else if (content.trim().isEmpty()) {
                     Toast.makeText(getContext(), "Please enter a description.", Toast.LENGTH_SHORT).show();
@@ -141,16 +129,16 @@ public class AddPostFragment extends Fragment {
                     return;
                 }
                 RadioButton selected = view.findViewById(type.getCheckedRadioButtonId());
-                root.child(id+"").child("timestamp").setValue(1);           // TODO: Set to current time and date, preferably time-zone independent.
+                root.child(id+"").child("content").setValue(content);
                 if (selected.getText().equals("Fire")) {
-                    root.child(id+"").child("type").setValue("fire");
+                    root.child(id+"").child("fire").setValue(true);
                 }
                 else {
-                    root.child(id+"").child("type").setValue("");
+                    root.child(id+"").child("type").setValue(false);
                 }
-                root.child(id+"").child("user").setValue(0);                // Placeholder since we don't have a user system ready.
-                root.child(id+"").child("content").setValue(content);
                 root.child(id+"").child("location").setValue(latitude + "," + longitude);
+                root.child(id+"").child("timestamp").setValue(System.currentTimeMillis());
+                root.child(id+"").child("title").setValue(title);
                 root.child(id+"").child("verifications").setValue(0);
 
                 Toast.makeText(getContext(), "The report was successfully added!", Toast.LENGTH_SHORT).show();

@@ -122,26 +122,23 @@ public class MapFragment extends Fragment {
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String previousChildName) {
                 String postId = dataSnapshot.getKey();
                 String coordsString = dataSnapshot.child("location").getValue(String.class);
-                String type = dataSnapshot.child("type").getValue(String.class);
-                DataSnapshot verifications = dataSnapshot.child("verifications");
+                boolean fire = dataSnapshot.child("fire").getValue(Boolean.class);
+                String title = dataSnapshot.child("title").getValue(String.class);
                 if (coordsString==null) return;
                 String[] coords = coordsString.split(",");
                 LatLng postCoords = new LatLng(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
                 Marker addedMarker;
 
-                if (type != null && type.equals("fire")) {
+                if (fire) {
                     Bitmap highResBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.fire);
-                    /* Your high-resolution bitmap */;
-                    int targetWidth = 100; // Define your target width in pixels
-                    int targetHeight = 100; // Define your target height in pixels
+                    int targetWidth = 100;
+                    int targetHeight = 100;
                     Bitmap scaledBitmap = Bitmap.createScaledBitmap(highResBitmap, targetWidth, targetHeight, false);
                     BitmapDescriptor markerIcon = BitmapDescriptorFactory.fromBitmap(scaledBitmap);
 
-                    addedMarker = map.addMarker(new MarkerOptions().position(postCoords).title("Fire").icon(markerIcon));
-                } else if (verifications.getValue() == null || verifications.getValue(Integer.class) < 0)
-                    addedMarker = map.addMarker(new MarkerOptions().position(postCoords).title("Request"));
-                 else
-                    addedMarker = map.addMarker(new MarkerOptions().position(postCoords).title("Post"));
+                    addedMarker = map.addMarker(new MarkerOptions().position(postCoords).title(title).icon(markerIcon));
+                } else
+                    addedMarker = map.addMarker(new MarkerOptions().position(postCoords).title(title));
                 markerHashMap.put(postId, addedMarker);
                 Log.d("Firebase", "markerHashMap: " + markerHashMap.toString());
             }
