@@ -67,11 +67,12 @@ public class CommunityFragment extends Fragment {
         ArrayList<String> accListContent = new ArrayList<String>();
         ArrayList<String> reqListTitle = new ArrayList<String>();
         ArrayList<String> reqListContent = new ArrayList<String>();
+        ArrayList<String> accIdList = new ArrayList<String>();
+        ArrayList<String> reqIdList = new ArrayList<String>();
         root = FirebaseDatabase.getInstance().getReference();
         root.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int count = 0; // Counter to limit to the first 5 posts
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                         postId = postSnapshot.getKey();
                         timestamp = postSnapshot.child("timestamp").getValue(Long.class);
@@ -84,13 +85,16 @@ public class CommunityFragment extends Fragment {
                         if(type.equalsIgnoreCase("accommodation")){
                             accListTitle.add(title);
                             accListContent.add(content);
+                            accIdList.add(postId);
                         }
                         else if (type.equalsIgnoreCase("request")){
                             reqListTitle.add(title);
                             reqListContent.add(content);
+                            reqIdList.add(postId);
                         }
                 }
 
+                //display lists
                 ArrayAdapter adapter = new ArrayAdapter(requireContext(), android.R.layout.simple_list_item_2, android.R.id.text1, accListTitle) {
                     @Override
                     public View getView(int position, View convertView, ViewGroup parent) {
@@ -121,26 +125,25 @@ public class CommunityFragment extends Fragment {
                 ListView reqList = view.findViewById(R.id.requests);
                 reqList.setAdapter(adapter1);
 
-                // Create a message handling object as an anonymous class.
-                AdapterView.OnItemClickListener clickedHandler = new AdapterView.OnItemClickListener() {
+                // handle click
+                AdapterView.OnItemClickListener reqClickedHandler = new AdapterView.OnItemClickListener() {
                     public void onItemClick(AdapterView parent, View v, int position, long id) {
-                        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(getContext());
-                        String selected = parent.getItemAtPosition(position).toString();
-
-                        builder.setNegativeButton("Close", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.cancel();
-                            }
-                        });
-                        builder.setMessage(selected);
-                        builder.setTitle(selected);
-                        builder.show();
-
+                        String postId = reqIdList.get(position);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("postId", postId);
+                        NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_navigation_community_to_viewPostFragment, bundle);
                     }
                 };
-                accList.setOnItemClickListener(clickedHandler);
-                reqList.setOnItemClickListener(clickedHandler);
+                AdapterView.OnItemClickListener accClickedHandler = new AdapterView.OnItemClickListener() {
+                    public void onItemClick(AdapterView parent, View v, int position, long id) {
+                        String postId = accIdList.get(position);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("postId", postId);
+                        NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_navigation_community_to_viewPostFragment, bundle);
+                    }
+                };
+                accList.setOnItemClickListener(accClickedHandler);
+                reqList.setOnItemClickListener(reqClickedHandler);
             }
 
             @Override
