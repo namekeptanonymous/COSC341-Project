@@ -33,7 +33,11 @@ public class RTDFragment extends Fragment {
     ListView listView;
     ImageView imageView2;
 
-    private ArrayList<String> storages = new ArrayList<String>();
+    private ArrayList<String>  accListTitle = new ArrayList<String>();
+    private ArrayList<String>  accListContent = new ArrayList<String>();
+
+
+
     private DatabaseReference root;
 
     public RTDFragment() {
@@ -62,33 +66,48 @@ public class RTDFragment extends Fragment {
         root = FirebaseDatabase.getInstance().getReference();
 
 //_____________________________________________________________________________________________________________________________________________________________firebase
-
+        accListTitle.clear();
+        accListContent.clear();
 
         root.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 int count = 0; // Counter to limit to the first 5 posts
+                ArrayList<String> combinedItems = new ArrayList<>();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     if (count < 5) {
-                       //postId = postSnapshot.child("postid").getValue(Integer.class);
-                       // long timestamp = postSnapshot.child("timestamp").getValue(long.class);
-                        //String type = postSnapshot.child("type").getValue(String.class);
                         String content = postSnapshot.child("content").getValue(String.class);
-                        //String location = postSnapshot.child("location").getValue(String.class);
-                        //int verifications = postSnapshot.child("verifications").getValue(Integer.class);
                         String title = postSnapshot.child("title").getValue(String.class);
-                        // Process the retrieved data as needed
-                        // Create a Post object or perform any required operations with the extracted data
+
+                        // Combine title and content into a single string with a newline for the second line
+                       // String combinedItem = title + "\n" + content;
+                       // combinedItems.add(combinedItem);
+
+                        accListTitle.add(title);
+                        accListContent.add(content);
 
 
-                        storages.add(title +"\n"+content);
                         count++; // Increment the counter
                     } else {
                         break; // Break the loop after 5 posts
                     }
                 }
+
                 // Do something with the first 5 posts' data
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_list_item_1, storages);
+
+                ArrayAdapter adapter = new ArrayAdapter(requireContext(), android.R.layout.simple_list_item_2, android.R.id.text1, accListTitle) {
+                    @Override
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        View view = super.getView(position, convertView, parent);
+                        TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+                        TextView text2 = (TextView) view.findViewById(android.R.id.text2);
+
+                        text1.setText(accListTitle.get(position));
+                        text2.setText(accListContent.get(position));
+                        return view;
+                    }
+                };
+
                 listView.setAdapter(adapter);
             }
 
@@ -97,6 +116,7 @@ public class RTDFragment extends Fragment {
                 Log.e("Firebase", "Error: " + databaseError.getMessage());
             }
         });
+
 
 
 //__________________________________________________________________________________________________________________________________________________
