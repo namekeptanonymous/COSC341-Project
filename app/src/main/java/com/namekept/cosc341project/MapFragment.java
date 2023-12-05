@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavDirections;
 import androidx.navigation.fragment.NavHostFragment;
 
 import android.content.DialogInterface;
@@ -110,10 +111,21 @@ public class MapFragment extends Fragment {
         });
 
         FloatingActionButton edit = view.findViewById(R.id.editButton);
-        add.setOnClickListener(new View.OnClickListener() {
+        edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                NavHostFragment.findNavController(mapFragment).navigate(R.id.action_navigation_maps_to_addPostFragment);
+                String postId = null;
+                if (selectedMarker!=null) {
+                    for (Map.Entry<String, Marker> entry : markerHashMap.entrySet()) {
+                        if (entry.getValue().equals(selectedMarker)) {
+                            postId = entry.getKey();
+                            break;
+                        }
+                    }
+                    Bundle bundle = new Bundle();
+                    bundle.putString("postId", postId);
+                    NavHostFragment.findNavController(mapFragment).navigate(R.id.action_navigation_maps_to_viewPostFragment, bundle);
+                }
             }
         });
 

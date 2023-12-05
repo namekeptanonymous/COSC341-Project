@@ -24,6 +24,7 @@ import java.util.Map;
 
 public class ViewPostFragment extends Fragment {
 
+    private String postId;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +40,8 @@ public class ViewPostFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        postId = getArguments().getString("postId");
+        Log.d("test", postId+"");
     }
 
     private OnCompleteListener<DataSnapshot> onValuesFetched = new
@@ -56,7 +59,7 @@ public class ViewPostFragment extends Fragment {
                         HashMap<String, HashMap<String, String>> databaseEntries = (HashMap) task.getResult().getValue();
                         if (databaseEntries==null)
                             return;
-                        List<Map.Entry<String, HashMap<String, String>>> indexableEntries = new ArrayList<>(databaseEntries.entrySet());
+//                        List<Map.Entry<String, HashMap<String, *>>> indexableEntries = new ArrayList<>(databaseEntries.entrySet());
                     }
                 }
             };
