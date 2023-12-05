@@ -91,9 +91,8 @@ public class ViewPostFragment extends Fragment {
 
                     Log.d("test",dataSnapshot.child("content").getValue(String.class));
 
-                } else {
-                    // Data doesn't exist at this specific location
                 }
+
             }
 
             @Override
