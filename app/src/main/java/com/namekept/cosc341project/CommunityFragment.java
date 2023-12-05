@@ -98,6 +98,7 @@ public class CommunityFragment extends Fragment {
                 ArrayAdapter adapter = new ArrayAdapter(requireContext(), android.R.layout.simple_list_item_2, android.R.id.text1, accListTitle) {
                     @Override
                     public View getView(int position, View convertView, ViewGroup parent) {
+
                         View view = super.getView(position, convertView, parent);
                         TextView text1 = (TextView) view.findViewById(android.R.id.text1);
                         TextView text2 = (TextView) view.findViewById(android.R.id.text2);
@@ -134,6 +135,7 @@ public class CommunityFragment extends Fragment {
                         NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_navigation_community_to_viewPostFragment, bundle);
                     }
                 };
+                reqList.setOnItemClickListener(reqClickedHandler);
                 AdapterView.OnItemClickListener accClickedHandler = new AdapterView.OnItemClickListener() {
                     public void onItemClick(AdapterView parent, View v, int position, long id) {
                         String postId = accIdList.get(position);
@@ -143,7 +145,7 @@ public class CommunityFragment extends Fragment {
                     }
                 };
                 accList.setOnItemClickListener(accClickedHandler);
-                reqList.setOnItemClickListener(reqClickedHandler);
+
             }
 
             @Override

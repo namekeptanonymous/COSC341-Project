@@ -5,11 +5,14 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -50,10 +53,31 @@ public class ViewPostFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         postId = getArguments().getString("postId");
         root = FirebaseDatabase.getInstance().getReference().child(postId);
+        TextView titleText = view.findViewById(R.id.screenTitle);
+        TextView locText = view.findViewById(R.id.location);
+        TextView typeText = view.findViewById(R.id.postType);
+        TextView contentText = view.findViewById(R.id.content);
+
+        Button done = view.findViewById(R.id.backButton1);
+        done.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View viewClick) {
+                FragmentManager fragmentManager = getParentFragmentManager();
+                if (fragmentManager.getBackStackEntryCount() > 0) {
+                    fragmentManager.popBackStack();
+                }
+            }
+        });
         root.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
                 if (dataSnapshot.exists()) {
+
+                    titleText.setText(dataSnapshot.child("title").getValue(String.class));
+                    locText.setText(dataSnapshot.child("location").getValue(String.class));
+                    typeText.setText(dataSnapshot.child("type").getValue(String.class).toUpperCase());
+                    contentText.setText(dataSnapshot.child("content").getValue(String.class));
 
                     Log.d("test",dataSnapshot.child("content").getValue(String.class));
 

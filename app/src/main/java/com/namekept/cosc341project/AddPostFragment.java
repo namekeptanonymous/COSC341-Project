@@ -64,7 +64,7 @@ public class AddPostFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         root = FirebaseDatabase.getInstance().getReference();
-        Button cancel = view.findViewById(R.id.cancelButton);
+        Button cancel = view.findViewById(R.id.backButton);
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View viewClick) {
