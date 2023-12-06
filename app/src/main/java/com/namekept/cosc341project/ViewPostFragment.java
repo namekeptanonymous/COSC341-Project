@@ -1,5 +1,7 @@
 package com.namekept.cosc341project;
 
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -24,6 +26,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -34,6 +37,7 @@ public class ViewPostFragment extends Fragment {
     private String postId;
     private String coords;
     private View fragmentView;
+    private String[] coord;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,7 +82,8 @@ public class ViewPostFragment extends Fragment {
 
                     titleText.setText(dataSnapshot.child("title").getValue(String.class));
                     coords = dataSnapshot.child("location").getValue(String.class);
-                    locText.setText(coords);
+                    coord = coords.split(",");
+                    locText.setText(getCompleteAddressString(Double.parseDouble(coord[0]), Double.parseDouble(coord[1])));
                     typeText.setText(dataSnapshot.child("type").getValue(String.class).toUpperCase());
                     contentText.setText(dataSnapshot.child("content").getValue(String.class));
                     verificationText.setText(dataSnapshot.child("verifications").getValue(Integer.class) + "");
@@ -89,7 +94,7 @@ public class ViewPostFragment extends Fragment {
                     sdf.setTimeZone(TimeZone.getDefault());
                     timestampText.setText(sdf.format(date));
 
-                    Log.d("test",dataSnapshot.child("content").getValue(String.class));
+                    Log.d("test", dataSnapshot.child("content").getValue(String.class));
 
                 }
 
@@ -110,5 +115,30 @@ public class ViewPostFragment extends Fragment {
                 NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_viewPostFragment_to_navigation_maps, bundle);
             }
         });
+    }
+
+    private String strAdd;
+    private String getCompleteAddressString(double LATITUDE, double LONGITUDE) {
+        Geocoder geocoder = new Geocoder(this.getContext(), Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(LATITUDE, LONGITUDE, 1);
+            if (addresses != null) {
+                Address returnedAddress = addresses.get(0);
+                StringBuilder strReturnedAddress = new StringBuilder("");
+
+                for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
+                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
+                }
+                strAdd = strReturnedAddress.toString();
+                Log.w("My Current loction address", strReturnedAddress.toString());
+            } else {
+                Log.w("My Current loction address", "No Address returned!");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.w("My Current loction address", "Canont get Address!");
+        }
+        return strAdd;
+
     }
 }

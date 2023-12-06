@@ -9,6 +9,7 @@ import androidx.navigation.fragment.NavHostFragment;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +18,8 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -26,6 +29,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.ChildEventListener;
@@ -46,10 +50,12 @@ public class MapFragment extends Fragment {
     private Marker selectedMarker;
     private View fragmentView;
     HashMap<String, Marker> markerHashMap = new HashMap<>();
+    private FusedLocationProviderClient fusedLocationClient;
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
         @Override
         public void onMapReady(GoogleMap googleMap) {
+
             map = googleMap;
             if (getArguments().get("coords") != null) {
                 googleMap.moveCamera(CameraUpdateFactory.zoomTo(13));
@@ -96,6 +102,8 @@ public class MapFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         fragmentView = inflater.inflate(R.layout.fragment_map, container, false);
+
+
         return fragmentView;
     }
 
@@ -103,6 +111,7 @@ public class MapFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
         SupportMapFragment mapFragment =
                 (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         if (mapFragment != null) {
@@ -143,16 +152,19 @@ public class MapFragment extends Fragment {
                 String postId = dataSnapshot.getKey();
                 String coordsString = dataSnapshot.child("location").getValue(String.class);
                 DataSnapshot fireSnapshot = dataSnapshot.child("fire");
+                String type = dataSnapshot.child("type").getValue(String.class);
                 Boolean fire;
+
                 if (fireSnapshot == null)
                     fire = false;
                 else
                     fire = fireSnapshot.getValue(Boolean.class);
+
                 String title = dataSnapshot.child("title").getValue(String.class);
                 if (coordsString == null) return;
                 String[] coords = coordsString.split(",");
                 LatLng postCoords = new LatLng(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
-                Marker addedMarker;
+                Marker addedMarker = null;
 
                 if (fire != null && fire) {
                     Bitmap highResBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.fire);
@@ -162,8 +174,27 @@ public class MapFragment extends Fragment {
                     BitmapDescriptor markerIcon = BitmapDescriptorFactory.fromBitmap(scaledBitmap);
 
                     addedMarker = map.addMarker(new MarkerOptions().position(postCoords).title(title).icon(markerIcon));
-                } else
+                } else if (type.equalsIgnoreCase("request")){
+                    Bitmap highResBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.request);
+                    int targetWidth = 100;
+                    int targetHeight = 100;
+                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(highResBitmap, targetWidth, targetHeight, false);
+                    BitmapDescriptor markerIcon = BitmapDescriptorFactory.fromBitmap(scaledBitmap);
+
+                    addedMarker = map.addMarker(new MarkerOptions().position(postCoords).title(title).icon(markerIcon));
+
+                } else if (type.equalsIgnoreCase("accommodation")){
+                    Bitmap highResBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.accommodation);
+                    int targetWidth = 100;
+                    int targetHeight = 100;
+                    Bitmap scaledBitmap = Bitmap.createScaledBitmap(highResBitmap, targetWidth, targetHeight, false);
+                    BitmapDescriptor markerIcon = BitmapDescriptorFactory.fromBitmap(scaledBitmap);
+
+                    addedMarker = map.addMarker(new MarkerOptions().position(postCoords).title(title).icon(markerIcon));
+
+                } else {
                     addedMarker = map.addMarker(new MarkerOptions().position(postCoords).title(title));
+                }
                 markerHashMap.put(postId, addedMarker);
                 Log.d("Firebase", "markerHashMap: " + markerHashMap.toString());
             }
