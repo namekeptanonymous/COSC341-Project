@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -33,9 +34,6 @@ public class RTDFragment extends Fragment {
     ListView listView;
     ImageView imageView2;
 
-    private ArrayList<String>  accListTitle = new ArrayList<String>();
-    private ArrayList<String>  accListContent = new ArrayList<String>();
-
 
 
     private DatabaseReference root;
@@ -56,6 +54,7 @@ public class RTDFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_r_t_d, container, false);
     }
 
+    private String content; private String title; private String postId;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -65,9 +64,9 @@ public class RTDFragment extends Fragment {
         TextView textView12 = view.findViewById(R.id.textView12);
         root = FirebaseDatabase.getInstance().getReference();
 
-//_____________________________________________________________________________________________________________________________________________________________firebase
-        accListTitle.clear();
-        accListContent.clear();
+        ArrayList<String>  titleList = new ArrayList<String>();
+        ArrayList<String>  contentList = new ArrayList<String>();
+        ArrayList<String>  idList = new ArrayList<String>();
 
         root.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -76,16 +75,13 @@ public class RTDFragment extends Fragment {
                 ArrayList<String> combinedItems = new ArrayList<>();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     if (count < 5) {
-                        String content = postSnapshot.child("content").getValue(String.class);
-                        String title = postSnapshot.child("title").getValue(String.class);
+                        content = postSnapshot.child("content").getValue(String.class);
+                        title = postSnapshot.child("title").getValue(String.class);
+                        postId = postSnapshot.getKey();
 
-                        // Combine title and content into a single string with a newline for the second line
-                       // String combinedItem = title + "\n" + content;
-                       // combinedItems.add(combinedItem);
-
-                        accListTitle.add(title);
-                        accListContent.add(content);
-
+                        titleList.add(title);
+                        contentList.add(content);
+                        idList.add(postId);
 
                         count++; // Increment the counter
                     } else {
@@ -93,22 +89,32 @@ public class RTDFragment extends Fragment {
                     }
                 }
 
-                // Do something with the first 5 posts' data
 
-                ArrayAdapter adapter = new ArrayAdapter(requireContext(), android.R.layout.simple_list_item_2, android.R.id.text1, accListTitle) {
+
+                ArrayAdapter adapter = new ArrayAdapter(requireContext(), android.R.layout.simple_list_item_2, android.R.id.text1, titleList) {
                     @Override
                     public View getView(int position, View convertView, ViewGroup parent) {
                         View view = super.getView(position, convertView, parent);
                         TextView text1 = (TextView) view.findViewById(android.R.id.text1);
                         TextView text2 = (TextView) view.findViewById(android.R.id.text2);
 
-                        text1.setText(accListTitle.get(position));
-                        text2.setText(accListContent.get(position));
+                        text1.setText(titleList.get(position));
+                        text2.setText(contentList.get(position));
                         return view;
                     }
                 };
 
                 listView.setAdapter(adapter);
+
+                AdapterView.OnItemClickListener clickedHandler = new AdapterView.OnItemClickListener() {
+                    public void onItemClick(AdapterView parent, View v, int position, long id) {
+                        String postId = idList.get(position);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("postId", postId);
+                        NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_navigation_rtd_to_viewPostFragment, bundle);
+                    }
+                };
+                listView.setOnItemClickListener(clickedHandler);
             }
 
             @Override
