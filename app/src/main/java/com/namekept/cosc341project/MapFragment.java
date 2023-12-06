@@ -177,16 +177,16 @@ public class MapFragment extends Fragment {
 
                 if (fire) {
                     Bitmap highResBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.fire);
-                    int targetWidth = 100;
-                    int targetHeight = 100;
+                    int targetWidth = 90;
+                    int targetHeight = 90;
                     Bitmap scaledBitmap = Bitmap.createScaledBitmap(highResBitmap, targetWidth, targetHeight, false);
                     BitmapDescriptor markerIcon = BitmapDescriptorFactory.fromBitmap(scaledBitmap);
 
                     addedMarker = map.addMarker(new MarkerOptions().position(postCoords).title(title).icon(markerIcon));
                 } else if (type.equalsIgnoreCase("request")){
                     Bitmap highResBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.request);
-                    int targetWidth = 100;
-                    int targetHeight = 100;
+                    int targetWidth = 90;
+                    int targetHeight = 90;
                     Bitmap scaledBitmap = Bitmap.createScaledBitmap(highResBitmap, targetWidth, targetHeight, false);
                     BitmapDescriptor markerIcon = BitmapDescriptorFactory.fromBitmap(scaledBitmap);
 
@@ -194,8 +194,8 @@ public class MapFragment extends Fragment {
 
                 } else if (type.equalsIgnoreCase("accommodation")){
                     Bitmap highResBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.accommodation);
-                    int targetWidth = 100;
-                    int targetHeight = 100;
+                    int targetWidth = 90;
+                    int targetHeight = 90;
                     Bitmap scaledBitmap = Bitmap.createScaledBitmap(highResBitmap, targetWidth, targetHeight, false);
                     BitmapDescriptor markerIcon = BitmapDescriptorFactory.fromBitmap(scaledBitmap);
 
@@ -210,7 +210,6 @@ public class MapFragment extends Fragment {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-                Log.d("Firebase", "am removinh!!!!!!!");
                 postId = snapshot.getKey();
                 removedMarker = markerHashMap.get(postId);
                 if (removedMarker != null) removedMarker.remove();
