@@ -99,6 +99,7 @@ public class MapFragment extends Fragment {
         return fragmentView;
     }
 
+    private String postId;
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -122,7 +123,6 @@ public class MapFragment extends Fragment {
         viewPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String postId = "";
                 if (selectedMarker != null) {
                     for (Map.Entry<String, Marker> entry : markerHashMap.entrySet()) {
                         if (entry.getValue().equals(selectedMarker)) {
