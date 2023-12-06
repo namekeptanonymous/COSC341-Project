@@ -33,6 +33,7 @@
                 android:layout_height="wrap_content"
                 android:text="Weather"
                 android:textAlignment="center"
+                android:textColor="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -52,6 +53,7 @@
                 android:layout_height="wrap_content"
                 android:text="Air quality"
                 android:textAlignment="center"
+                android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -65,6 +67,7 @@
                 android:onClick="air"
                 android:text="78"
                 android:textAlignment="center"
+                android:textColor="@color/black"
                 android:textSize="80dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -77,6 +80,7 @@
                 android:layout_height="20dp"
                 android:text="Moderate"
                 android:textAlignment="center"
+                android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -89,6 +93,7 @@
                 android:layout_height="wrap_content"
                 android:text="Evacuation Level"
                 android:textAlignment="center"
+                android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -99,6 +104,7 @@
                 android:layout_marginTop="4dp"
                 android:text="High\nAlert"
                 android:textAlignment="center"
+                android:textColor="@color/black"
                 android:textSize="40dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView15" />
@@ -136,6 +142,7 @@
                     android:layout_marginTop="8dp"
                     android:paddingLeft="8dp"
                     android:text="New Posts"
+                    android:textColor="@color/black"
                     android:textSize="24sp" />
 
                 <ListView
@@ -170,6 +177,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:text="Nearest fires: 173km"
+                android:textColor="@color/black"
                 android:textSize="15dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -180,6 +188,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:text="Kelowna, BC"
+                android:textColor="@color/black"
                 android:textSize="30sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -192,6 +201,7 @@
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="8dp"
                 android:text="Size: 15km"
+                android:textColor="@color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
@@ -203,6 +213,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginBottom="8dp"
                 android:text="Warning level: High"
+                android:textColor="@color/black"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView22" />
