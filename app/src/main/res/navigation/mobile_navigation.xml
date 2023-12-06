@@ -78,6 +78,9 @@
         <action
             android:id="@+id/action_navigation_report_to_addPostFragment"
             app:destination="@id/addPostFragment" />
+        <action
+            android:id="@+id/action_navigation_report_to_navigation_maps"
+            app:destination="@id/navigation_maps" />
     </fragment>
 
     <fragment

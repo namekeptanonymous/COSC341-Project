@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
 import android.util.Log;
@@ -72,10 +73,8 @@ public class ViewPostFragment extends Fragment {
         done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View viewClick) {
-                FragmentManager fragmentManager = getParentFragmentManager();
-                if (fragmentManager.getBackStackEntryCount() > 0) {
-                    fragmentManager.popBackStack();
-                }
+                NavController navController = NavHostFragment.findNavController(getParentFragment());
+                navController.popBackStack();
             }
         });
         root.addListenerForSingleValueEvent(new ValueEventListener() {
