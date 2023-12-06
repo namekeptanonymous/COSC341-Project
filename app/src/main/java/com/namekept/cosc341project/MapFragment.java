@@ -49,6 +49,8 @@ public class MapFragment extends Fragment {
     private GoogleMap map;
     private Marker selectedMarker;
     private View fragmentView;
+    private String coordsString; private String type; private boolean fire;
+    private String[] coord;
     HashMap<String, Marker> markerHashMap = new HashMap<>();
     private FusedLocationProviderClient fusedLocationClient;
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
@@ -149,11 +151,10 @@ public class MapFragment extends Fragment {
         root.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String previousChildName) {
-                String postId = dataSnapshot.getKey();
-                String coordsString = dataSnapshot.child("location").getValue(String.class);
+                postId = dataSnapshot.getKey();
+                coordsString = dataSnapshot.child("location").getValue(String.class);
                 DataSnapshot fireSnapshot = dataSnapshot.child("fire");
-                String type = dataSnapshot.child("type").getValue(String.class);
-                Boolean fire;
+                type = dataSnapshot.child("type").getValue(String.class);
 
                 if (fireSnapshot == null)
                     fire = false;
@@ -162,11 +163,11 @@ public class MapFragment extends Fragment {
 
                 String title = dataSnapshot.child("title").getValue(String.class);
                 if (coordsString == null) return;
-                String[] coords = coordsString.split(",");
-                LatLng postCoords = new LatLng(Double.parseDouble(coords[0]), Double.parseDouble(coords[1]));
+                coord = coordsString.split(",");
+                LatLng postCoords = new LatLng(Double.parseDouble(coord[0]), Double.parseDouble(coord[1]));
                 Marker addedMarker = null;
 
-                if (fire != null && fire) {
+                if (fire) {
                     Bitmap highResBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.fire);
                     int targetWidth = 100;
                     int targetHeight = 100;
