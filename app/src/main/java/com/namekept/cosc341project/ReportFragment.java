@@ -34,6 +34,13 @@ public class ReportFragment extends Fragment {
     private ArrayAdapter<Report> adapter;
     private DatabaseReference root;
     private List<Report> reportList;
+    private String postId;
+    private Long timestamp;
+    private String type;
+    private String title;
+    private String content;
+    private String location;
+    private int verifications;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,30 +59,40 @@ public class ReportFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        listView = view.findViewById(R.id.list_view_reports);
+        listView = view.findViewById(R.id.reports);
 
         adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, reportList);
         listView.setAdapter(adapter);
 
-        ImageView imageViewShare = view.findViewById(R.id.share);
-        imageViewShare.setOnClickListener(new View.OnClickListener() {
+//        ImageView imageViewShare = view.findViewById(R.id.share);
+//        imageViewShare.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//            }
+//        });
+
+        FloatingActionButton addButton = view.findViewById(R.id.fab_add_report);
+        addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_navigation_maps_to_addPostFragment);
             }
         });
 
         root.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Log.d("test",dataSnapshot.toString());
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    String postId = postSnapshot.getKey();
-                    Long timestamp = postSnapshot.child("timestamp").getValue(Long.class);
-                    String type = postSnapshot.child("type").getValue(String.class);
-                    String title = postSnapshot.child("title").getValue(String.class);
-                    String content = postSnapshot.child("content").getValue(String.class);
-                    String location = postSnapshot.child("location").getValue(String.class);
-                    int verifications = postSnapshot.child("verifications").getValue(Integer.class);
+
+                    postId = postSnapshot.getKey();
+                    timestamp = postSnapshot.child("timestamp").getValue(Long.class);
+                    type = postSnapshot.child("type").getValue(String.class);
+                    title = postSnapshot.child("title").getValue(String.class);
+                    content = postSnapshot.child("content").getValue(String.class);
+                    location = postSnapshot.child("location").getValue(String.class);
+                    verifications = postSnapshot.child("verifications").getValue(Integer.class);
 
                 }
             }
