@@ -253,9 +253,9 @@ public class MapFragment extends Fragment {
 
                             if (postId != null) {
                                 markerHashMap.remove(postId);
+                                selectedMarker.remove();
                                 root.child(postId).removeValue();
                             }
-                            selectedMarker.remove();
                             Toast.makeText(getContext(), "The selected marker has been removed.", Toast.LENGTH_SHORT).show();
                             FloatingActionButton delete = fragmentView.findViewById(R.id.deleteButton);
                             FloatingActionButton viewPost = fragmentView.findViewById(R.id.viewButton);
