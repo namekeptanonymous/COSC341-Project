@@ -17,14 +17,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SOSFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class SOSFragment extends Fragment {
 
     ConstraintLayout constraintLayout;
+    ConstraintLayout constraintLayout1;
 
     Button button;
 
@@ -35,10 +31,6 @@ public class SOSFragment extends Fragment {
     TextView textView4;
 
     TextView textView5;
-
-    public SOSFragment() {
-        // Required empty public constructor
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,15 +54,11 @@ public class SOSFragment extends Fragment {
 
         button = view.findViewById(R.id.button2);
 
-        info = view.findViewById(R.id.info);
-
         textView3 = view.findViewById(R.id.textView3);
 
         textView4 = view.findViewById(R.id.textView4);
 
         textView5 = view.findViewById(R.id.textView5);
-
-        info.setText("Location " + "\n\nBattery level " + "\n\ncell strength " );
 
         Handler handler = new Handler();
 
@@ -97,9 +85,9 @@ public class SOSFragment extends Fragment {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        textView3.setText("✔");
-                        textView4.setText("✔");
-                        textView5.setText("✔");
+                        textView3.setVisibility(View.VISIBLE);
+                        textView4.setVisibility(View.VISIBLE);
+                        textView5.setVisibility(View.VISIBLE);
                     }
                 }, 1500);
 
