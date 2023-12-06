@@ -39,6 +39,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 
@@ -49,8 +50,11 @@ public class MapFragment extends Fragment {
     private GoogleMap map;
     private Marker selectedMarker;
     private View fragmentView;
-    private String coordsString; private String type; private boolean fire;
-    HashMap<String, Marker> markerHashMap = new HashMap<>();
+    private String coordsString; private String type; private boolean fire; private String title;
+    private String[] coord;
+    private LatLng postCoords = new LatLng(0,0);
+    private Marker addedMarker; private Marker removedMarker;
+    private HashMap<String, Marker> markerHashMap = new HashMap<>();
     private FusedLocationProviderClient fusedLocationClient;
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -134,37 +138,42 @@ public class MapFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (selectedMarker != null) {
-                    for (Map.Entry<String, Marker> entry : markerHashMap.entrySet()) {
-                        if (entry.getValue().equals(selectedMarker)) {
-                            postId = entry.getKey();
+
+                    Iterator<Map.Entry<String, Marker>> iterator = markerHashMap.entrySet().iterator();
+                    while (iterator.hasNext()) {
+                        Map.Entry<String, Marker> entry = iterator.next();
+                        String key = entry.getKey();
+                        Marker value = entry.getValue();
+
+                        if (value.getPosition().equals(selectedMarker.getPosition())) {
+                            postId = key;
+                            Bundle bundle = new Bundle();
+                            bundle.putString("postId", postId);
+                            NavHostFragment.findNavController(mapFragment).navigate(R.id.action_navigation_maps_to_viewPostFragment, bundle);
                             break;
                         }
                     }
-                    Bundle bundle = new Bundle();
-                    bundle.putString("postId", postId);
-                    NavHostFragment.findNavController(mapFragment).navigate(R.id.action_navigation_maps_to_viewPostFragment, bundle);
-                }
+                    }
             }
         });
 
         root.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, String previousChildName) {
-                postId = dataSnapshot.getKey();
+                String addPostId = dataSnapshot.getKey();
                 coordsString = dataSnapshot.child("location").getValue(String.class);
-                DataSnapshot fireSnapshot = dataSnapshot.child("fire");
+                DataSnapshot firesnapshot = dataSnapshot.child("fire");
                 type = dataSnapshot.child("type").getValue(String.class);
 
-                if (fireSnapshot == null)
+                if (firesnapshot.getValue(Boolean.class) == null)
                     fire = false;
                 else
-                    fire = fireSnapshot.getValue(Boolean.class);
+                    fire = firesnapshot.getValue(Boolean.class);
 
-                String title = dataSnapshot.child("title").getValue(String.class);
+                title = dataSnapshot.child("title").getValue(String.class);
                 if (coordsString == null) return;
-                String[] coord = coordsString.split(",");
-                LatLng postCoords = new LatLng(Double.parseDouble(coord[0]), Double.parseDouble(coord[1]));
-                Marker addedMarker = null;
+                coord = coordsString.split(",");
+                postCoords = new LatLng(Double.parseDouble(coord[0]), Double.parseDouble(coord[1]));
 
                 if (fire) {
                     Bitmap highResBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.fire);
@@ -195,15 +204,15 @@ public class MapFragment extends Fragment {
                 } else {
                     addedMarker = map.addMarker(new MarkerOptions().position(postCoords).title(title));
                 }
-                markerHashMap.put(postId, addedMarker);
+                markerHashMap.put(addPostId, addedMarker);
                 Log.d("Firebase", "markerHashMap: " + markerHashMap.toString());
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
                 Log.d("Firebase", "am removinh!!!!!!!");
-                String postId = snapshot.getKey();
-                Marker removedMarker = markerHashMap.get(postId);
+                postId = snapshot.getKey();
+                removedMarker = markerHashMap.get(postId);
                 if (removedMarker != null) removedMarker.remove();
                 markerHashMap.remove(postId);
             }
