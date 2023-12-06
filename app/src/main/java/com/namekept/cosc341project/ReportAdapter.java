@@ -1,8 +1,10 @@
 package com.namekept.cosc341project;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -43,6 +45,7 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ReportView
         private final TextView textViewTitle;
         private final TextView textViewDescription;
         private final OnReportListener onReportListener;
+        private final ImageView imageViewMoreOptions = null;
 
         public ReportViewHolder(View itemView, OnReportListener onReportListener) {
             super(itemView);
@@ -51,6 +54,15 @@ public class ReportAdapter extends RecyclerView.Adapter<ReportAdapter.ReportView
 
             this.onReportListener = onReportListener;
             itemView.setOnClickListener(this);
+
+            imageViewMoreOptions.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Log.d("ReportAdapter", "More options clicked for position: " + getAdapterPosition());
+                    if (onReportListener != null) {
+                        onReportListener.onMoreOptionsClicked(getAdapterPosition());
+                    }
+                } });
         }
 
         void bind(Report report) {
