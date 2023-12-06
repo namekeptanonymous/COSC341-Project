@@ -32,13 +32,13 @@ public class ReportFragment extends Fragment {
     private ListView listView;
     private View fragmentView;
     private ArrayAdapter<Report> adapter;
-    private DatabaseReference databaseReference;
+    private DatabaseReference root;
     private List<Report> reportList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        databaseReference = FirebaseDatabase.getInstance().getReference("reports");
+        root = FirebaseDatabase.getInstance().getReference();
         reportList = new ArrayList<>();
     }
 
@@ -57,82 +57,64 @@ public class ReportFragment extends Fragment {
         adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, reportList);
         listView.setAdapter(adapter);
 
-        ImageView imageViewMoreOptions= view.findViewById();
-        imageViewMoreOptions.setOnClickListener(new View.OnClickListener() {
+        ImageView imageViewShare = view.findViewById(R.id.share);
+        imageViewShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // Delete the report from Firebase
-                databaseReference.child(report.getId()).removeValue();
-                reportList.remove(report);
-                adapter.notifyDataSetChanged();
 
-            } });
-    }
+            }
+        });
 
-    loadReportsFromFirebase();
-
-    FloatingActionButton fabAddReport = view.findViewById(R.id.fab_add_report);
-        fabAddReport.setOnClickListener(v -> NavHostFragment.findNavController(getParentFragment())
-            .navigate(R.id.action_navigation_report_to_addPostFragment));
-
-        listView.setOnItemClickListener((parent, view1, position, id) -> {
-        Report report = reportList.get(position);
-        showPopupMenu(view1, report);
-    });
-}
-
-    private void loadReportsFromFirebase() {
-        databaseReference.addValueEventListener(new ValueEventListener() {
+        root.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d("test",dataSnapshot.toString());
-                reportList.clear();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    Report report = postSnapshot.getValue(Report.class);
-                    if (report != null) {
-                        reportList.add(report);
-                    }
+                    String postId = postSnapshot.getKey();
+                    Long timestamp = postSnapshot.child("timestamp").getValue(Long.class);
+                    String type = postSnapshot.child("type").getValue(String.class);
+                    String title = postSnapshot.child("title").getValue(String.class);
+                    String content = postSnapshot.child("content").getValue(String.class);
+                    String location = postSnapshot.child("location").getValue(String.class);
+                    int verifications = postSnapshot.child("verifications").getValue(Integer.class);
+
                 }
-                adapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("ReportFragment", "loadReportsFromFirebase:onCancelled", databaseError.toException());
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
     }
-
     private void showPopupMenu(View view, Report report) {
-        PopupMenu popup = new PopupMenu(getContext(), view);
-        popup.inflate(R.menu.report_options_menu); // Your menu resource
-        popup.setOnMenuItemClickListener(item -> {
-            Log.d("test","in da menu");
-            switch (item.getItemId()) {
-                case R.id.edit:
-                    // Navigate to the edit fragment, passing the selected report's data
-                    Bundle editBundle = new Bundle();
-                    editBundle.putString("reportId", report.getId());
-                    NavHostFragment.findNavController(this)
-                            .navigate(R.id.action_navigation_report_to_navigation_maps, editBundle);
-                    return true;
-                case R.id.share:
-                    // Share report content via an intent
-                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
-                    shareIntent.setType("text/plain");
-                    shareIntent.putExtra(Intent.EXTRA_TEXT, report.getDescription());
-                    startActivity(Intent.createChooser(shareIntent, "Share Report Using"));
-                    return true;
-                case R.id.delete:
-                    // Delete the report from Firebase
-                    databaseReference.child(report.getId()).removeValue();
-                    reportList.remove(report);
-                    adapter.notifyDataSetChanged();
-                    return true;
-                default:
-                    return false;
-            }
-        });
-        popup.show();
+//        PopupMenu popup = new PopupMenu(getContext(), view);
+//        popup.setOnMenuItemClickListener(item -> {
+//            Log.d("test","in da menu");
+//            switch (item.getItemId()) {
+//                case R.id.edit:
+//                    // Navigate to the edit fragment, passing the selected report's data
+//                    Bundle editBundle = new Bundle();
+//                    editBundle.putString("reportId", report.getId());
+//                    NavHostFragment.findNavController(this)
+//                            .navigate(R.id.action_navigation_report_to_navigation_maps, editBundle);
+//                    return true;
+//                case R.id.share:
+//                    // Share report content via an intent
+//                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
+//                    shareIntent.setType("text/plain");
+//                    shareIntent.putExtra(Intent.EXTRA_TEXT, report.getDescription());
+//                    startActivity(Intent.createChooser(shareIntent, "Share Report Using"));
+//                    return true;
+//                case R.id.delete:
+//                    // Delete the report from Firebase
+//                    databaseReference.child(report.getId()).removeValue();
+//                    reportList.remove(report);
+//                    adapter.notifyDataSetChanged();
+//                    return true;
+//                default:
+//                    return false;
+//            }
+//        });
+//        popup.show();
     }
 }
