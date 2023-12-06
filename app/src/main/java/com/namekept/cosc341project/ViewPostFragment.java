@@ -38,6 +38,9 @@ public class ViewPostFragment extends Fragment {
     private String coords;
     private View fragmentView;
     private String[] coord;
+    private Date date;
+    private SimpleDateFormat sdf;
+    private long unixTime;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,6 +60,7 @@ public class ViewPostFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         postId = getArguments().getString("postId");
         root = FirebaseDatabase.getInstance().getReference().child(postId);
+        Log.d("postId",postId);
         TextView titleText = view.findViewById(R.id.screenTitle);
         TextView locText = view.findViewById(R.id.location);
         TextView typeText = view.findViewById(R.id.postType);
@@ -88,16 +92,12 @@ public class ViewPostFragment extends Fragment {
                     contentText.setText(dataSnapshot.child("content").getValue(String.class));
                     verificationText.setText(dataSnapshot.child("verifications").getValue(Integer.class) + "");
 
-                    long unixTime = dataSnapshot.child("timestamp").getValue(Long.class);
-                    Date date = new Date(unixTime);
-                    SimpleDateFormat sdf = new SimpleDateFormat("MMMM dd, yyyy 'at' hh:mm a", Locale.getDefault());
+                    unixTime = dataSnapshot.child("timestamp").getValue(Long.class);
+                    date = new Date(unixTime);
+                    sdf = new SimpleDateFormat("MMMM dd, yyyy 'at' hh:mm a", Locale.getDefault());
                     sdf.setTimeZone(TimeZone.getDefault());
                     timestampText.setText(sdf.format(date));
-
-                    Log.d("test", dataSnapshot.child("content").getValue(String.class));
-
                 }
-
             }
 
             @Override
@@ -125,18 +125,14 @@ public class ViewPostFragment extends Fragment {
             if (addresses != null) {
                 Address returnedAddress = addresses.get(0);
                 StringBuilder strReturnedAddress = new StringBuilder("");
-
                 for (int i = 0; i <= returnedAddress.getMaxAddressLineIndex(); i++) {
                     strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("\n");
                 }
                 strAdd = strReturnedAddress.toString();
-                Log.w("My Current loction address", strReturnedAddress.toString());
-            } else {
-                Log.w("My Current loction address", "No Address returned!");
+
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Log.w("My Current loction address", "Canont get Address!");
         }
         return strAdd;
 

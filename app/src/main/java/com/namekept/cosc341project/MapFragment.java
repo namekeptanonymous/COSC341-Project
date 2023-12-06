@@ -50,7 +50,6 @@ public class MapFragment extends Fragment {
     private Marker selectedMarker;
     private View fragmentView;
     private String coordsString; private String type; private boolean fire;
-    private String[] coord;
     HashMap<String, Marker> markerHashMap = new HashMap<>();
     private FusedLocationProviderClient fusedLocationClient;
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
@@ -163,7 +162,7 @@ public class MapFragment extends Fragment {
 
                 String title = dataSnapshot.child("title").getValue(String.class);
                 if (coordsString == null) return;
-                coord = coordsString.split(",");
+                String[] coord = coordsString.split(",");
                 LatLng postCoords = new LatLng(Double.parseDouble(coord[0]), Double.parseDouble(coord[1]));
                 Marker addedMarker = null;
 
