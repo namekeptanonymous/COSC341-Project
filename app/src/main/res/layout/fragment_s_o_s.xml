@@ -64,6 +64,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="16dp"
                 android:text="The following into will be sent:"
+                android:textColor="@color/black"
                 android:textSize="22sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -76,6 +77,7 @@
                 android:layout_marginStart="48dp"
                 android:layout_marginTop="16dp"
                 android:text="Location:"
+                android:textColor="@color/black"
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView" />
@@ -87,6 +89,7 @@
                 android:layout_marginStart="48dp"
                 android:layout_marginTop="16dp"
                 android:text="Battery Level:"
+                android:textColor="@color/black"
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/Location" />
@@ -98,6 +101,7 @@
                 android:layout_marginStart="48dp"
                 android:layout_marginTop="16dp"
                 android:text="Cell Strength:"
+                android:textColor="@color/black"
                 android:textSize="20sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/battery" />
@@ -110,6 +114,7 @@
                 android:layout_marginEnd="48dp"
                 android:drawableStart="@drawable/done"
                 android:text=""
+                android:textColor="@color/black"
                 android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView5" />
@@ -122,6 +127,7 @@
                 android:layout_marginEnd="48dp"
                 android:drawableStart="@drawable/done"
                 android:text=""
+                android:textColor="@color/black"
                 android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView3" />
@@ -134,6 +140,7 @@
                 android:layout_marginEnd="48dp"
                 android:drawableStart="@drawable/done"
                 android:text=""
+                android:textColor="@color/black"
                 android:visibility="invisible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView" />
