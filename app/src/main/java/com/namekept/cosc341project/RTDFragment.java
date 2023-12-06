@@ -74,7 +74,7 @@ public class RTDFragment extends Fragment {
                 int count = 0; // Counter to limit to the first 5 posts
                 ArrayList<String> combinedItems = new ArrayList<>();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    if (count < 5) {
+                    if (count < 10) {
                         content = postSnapshot.child("content").getValue(String.class);
                         title = postSnapshot.child("title").getValue(String.class);
                         postId = postSnapshot.getKey();

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="20dp"
+    android:paddingTop="0dp"
     android:paddingBottom="80dp"
     tools:context=".RTDFragment">
 
@@ -14,24 +14,23 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/relativeLayout"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="175dp"
             android:layout_marginStart="6dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="6dp"
-            android:layout_marginBottom="40dp"
+            android:layout_marginBottom="32dp"
             android:background="@drawable/border"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
+            android:padding="8dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/relativeLayout2">
 
 
             <TextView
                 android:id="@+id/textView13"
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
                 android:text="Weather"
                 android:textAlignment="center"
                 app:layout_constraintStart_toStartOf="parent"
@@ -41,7 +40,6 @@
                 android:id="@+id/imageView2"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="4dp"
                 android:onClick="weather"
                 android:src="@drawable/sun"
@@ -52,7 +50,6 @@
                 android:id="@+id/textView14"
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:text="Air quality"
                 android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -80,6 +77,7 @@
                 android:layout_height="20dp"
                 android:text="Moderate"
                 android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
@@ -89,8 +87,6 @@
                 android:id="@+id/textView15"
                 android:layout_width="120dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
                 android:text="Evacuation Level"
                 android:textAlignment="center"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -101,7 +97,6 @@
                 android:layout_width="120dp"
                 android:layout_height="120dp"
                 android:layout_marginTop="4dp"
-                android:layout_marginEnd="8dp"
                 android:text="High\nAlert"
                 android:textAlignment="center"
                 android:textSize="40dp"
@@ -113,40 +108,56 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/relativeLayout2"
             android:layout_width="0dp"
-            android:layout_height="230dp"
-            android:layout_marginStart="6dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
             android:layout_marginTop="16dp"
-            android:layout_marginEnd="6dp"
-            android:layout_marginBottom="34dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
             android:background="@drawable/border"
+            android:padding="8dp"
             app:layout_constraintBottom_toTopOf="@+id/relativeLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
 
-            <ListView
-                android:id="@+id/lists"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:paddingTop="4dp"
-                android:paddingBottom="4dp"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:paddingLeft="8dp"
+                    android:text="New Posts"
+                    android:textSize="24sp" />
+
+                <ListView
+                    android:id="@+id/lists"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp" />
+            </LinearLayout>
+
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/constraintLayout"
             android:layout_width="0dp"
-            android:layout_height="150dp"
-            android:layout_marginStart="6dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="6dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="8dp"
             android:background="@drawable/border"
+            android:padding="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -156,40 +167,43 @@
                 android:id="@+id/textView20"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="32dp"
-                android:text="Nearest fires"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:text="Nearest fires: 173km"
                 android:textSize="15dp"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/textView21"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="52dp"
-                android:text="Location here"
+                android:layout_marginStart="8dp"
+                android:text="Kelowna, BC"
+                android:textSize="30sp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView20" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/textView22"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
                 android:text="Size: 15km"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
             <TextView
                 android:id="@+id/textView23"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="52dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
                 android:text="Warning level: High"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView22" />
         </androidx.constraintlayout.widget.ConstraintLayout>
