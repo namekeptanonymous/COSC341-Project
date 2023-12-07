@@ -94,7 +94,7 @@ public class SOSFragment extends Fragment {
                         getResources().getColor(android.R.color.transparent),
                         getResources().getColor(android.R.color.holo_red_light)
                 );
-                colorAnimation.setDuration(1500);
+                colorAnimation.setDuration(1200);
 
                 colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     @Override
@@ -108,10 +108,17 @@ public class SOSFragment extends Fragment {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+                        Intent batteryStatus = requireContext().registerReceiver(null, ifilter);
+                        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+                        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+
+                        float batteryPct = level * 100 / (float)scale;
+                        textView3.setText((int) batteryPct + "%");
                         textView3.setVisibility(View.VISIBLE);
                         textView5.setVisibility(View.VISIBLE);
                     }
-                }, 1500);
+                }, 400);
             }
         });
     }
