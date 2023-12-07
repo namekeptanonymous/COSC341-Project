@@ -184,12 +184,19 @@ public class RTDFragment extends Fragment {
                         public void onSuccess(Location location) {
                             if (location != null) {
                                 getAddressFromLocation(getContext(), location.getLatitude(), location.getLongitude());
+                            } else {
+                                TextView locationField = fragmentView.findViewById(R.id.textView21);
+                                TextView locationData1 = fragmentView.findViewById(R.id.textView22);
+                                TextView locationData2 = fragmentView.findViewById(R.id.textView23);
+                                TextView locationData3 = fragmentView.findViewById(R.id.textView20);
+                                locationField.setText("Location is off.");
+                                locationData1.setText("");
+                                locationData2.setText("");
+                                locationData3.setText("");
+
                             }
                         }
                     });
-        } else {
-            TextView locationField = fragmentView.findViewById(R.id.textView21);
-            locationField.setText("Location is off.");
         }
     }
 
