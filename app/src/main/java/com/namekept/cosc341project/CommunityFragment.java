@@ -103,7 +103,7 @@ public class CommunityFragment extends Fragment {
                         return view;
                     }
                 };
-                ListView reqList = view.findViewById(R.id.reports);
+                ListView reqList = view.findViewById(R.id.requests);
                 reqList.setAdapter(adapter1);
 
                 // handle click

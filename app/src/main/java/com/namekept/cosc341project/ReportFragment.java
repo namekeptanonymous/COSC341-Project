@@ -1,6 +1,5 @@
 package com.namekept.cosc341project;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,9 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.PopupMenu;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -58,11 +56,52 @@ public class ReportFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ArrayList<String> reqListTitle = new ArrayList<>();
+        ArrayList<String> reqListContent = new ArrayList<>();
+        ArrayList<String> reqIdList = new ArrayList<>();
 
-        listView = view.findViewById(R.id.reports);
+        listView = view.findViewById(R.id.Reports);
 
-        adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, reportList);
-        listView.setAdapter(adapter);
+        // Setup Firebase ValueEventListener
+        root.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    // Extract data from snapshot
+                    type = postSnapshot.child("type").getValue(String.class);
+                    String title = postSnapshot.child("title").getValue(String.class);
+                    String content = postSnapshot.child("content").getValue(String.class);
+                    String postId = postSnapshot.getKey();
+
+                    if (type.equals("report")) {
+                        reqListTitle.add(title);
+                        reqListContent.add(content);
+                        reqIdList.add(postId);
+                    }
+                }
+
+                // Setup ArrayAdapter with simple_list_item_2 layout
+                ArrayAdapter<String> adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_2, android.R.id.text1, reqListTitle) {
+                    @Override
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        View view = super.getView(position, convertView, parent);
+                        TextView text1 = view.findViewById(android.R.id.text1);
+                        TextView text2 = view.findViewById(android.R.id.text2);
+
+                        text1.setText(reqListTitle.get(position));
+                        text2.setText(reqListContent.get(position));
+                        return view;
+                    }
+                };
+                listView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Log.w("Firebase", "loadPost:onCancelled", databaseError.toException());
+            }
+        });
+
 
 //        ImageView imageViewShare = view.findViewById(R.id.share);
 //        imageViewShare.setOnClickListener(new View.OnClickListener() {
@@ -85,7 +124,8 @@ public class ReportFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.d("test",dataSnapshot.toString());
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-
+                    Report report = postSnapshot.getValue(Report.class); // Assuming Report is a model class with appropriate fields
+                    reportList.add(report);
                     postId = postSnapshot.getKey();
                     timestamp = postSnapshot.child("timestamp").getValue(Long.class);
                     type = postSnapshot.child("type").getValue(String.class);
@@ -93,15 +133,44 @@ public class ReportFragment extends Fragment {
                     content = postSnapshot.child("content").getValue(String.class);
                     location = postSnapshot.child("location").getValue(String.class);
                     verifications = postSnapshot.child("verifications").getValue(Integer.class);
-
+                    if (type.equalsIgnoreCase("report")){
+                        reqListTitle.add(title);
+                        reqListContent.add(content);
+                        reqIdList.add(postId);
+                    }
                 }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
+                Log.e("Firebase", "Error: " + error.getMessage());
 
             }
         });
+        ArrayAdapter adapter = new ArrayAdapter(requireContext(), android.R.layout.simple_list_item_2, android.R.id.text1, reqListTitle) {
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View view = super.getView(position, convertView, parent);
+                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
+                TextView text2 = (TextView) view.findViewById(android.R.id.text2);
+
+                text1.setText(reqListTitle.get(position));
+                text2.setText(reqListContent.get(position));
+                return view;
+            }
+        };
+        listView.setAdapter(adapter);
+
+        // handle click
+        AdapterView.OnItemClickListener reqClickedHandler = new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView parent, View v, int position, long id) {
+//                String postId = reqIdList.get(position);
+//                Bundle bundle = new Bundle();
+//                bundle.putString("postId", postId);
+//                NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_navigation_community_to_viewPostFragment, bundle);
+            }
+        };
+        listView.setOnItemClickListener(reqClickedHandler);
     }
     private void showPopupMenu(View view, Report report) {
 //        PopupMenu popup = new PopupMenu(getContext(), view);

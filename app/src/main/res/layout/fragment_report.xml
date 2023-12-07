@@ -48,7 +48,7 @@
                 android:textStyle="bold" />
 
             <ListView
-                android:id="@+id/reports"
+                android:id="@+id/Reports"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:layout_editor_absoluteX="150dp"
