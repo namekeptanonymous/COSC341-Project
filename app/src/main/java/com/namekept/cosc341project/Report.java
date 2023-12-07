@@ -60,5 +60,9 @@ public class Report {
         this.coordinates = coordinates;
     }
 
-    // You might also want to add other methods or business logic here, depending on your needs
+    @Override
+    public String toString() {
+        return title + " - " + description; // Customize this string format as needed
+    }
+
 }
