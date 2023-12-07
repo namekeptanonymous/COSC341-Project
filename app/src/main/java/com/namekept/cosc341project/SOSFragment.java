@@ -31,6 +31,8 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import org.w3c.dom.Text;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
@@ -101,10 +103,12 @@ public class SOSFragment extends Fragment {
                 // Create a ValueAnimator to animate the background color change
                 ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(),
                         getResources().getColor(android.R.color.transparent),
-                        getResources().getColor(android.R.color.holo_red_light)
+                        getResources().getColor(android.R.color.holo_green_light)
                 );
                 colorAnimation.setDuration(1200);
 
+                TextView textView = view.findViewById(R.id.textView);
+                textView.setText("Data sent.");
                 colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animator) {
