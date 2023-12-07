@@ -62,6 +62,7 @@ public class RTDFragment extends Fragment {
         imageView2 = view.findViewById(R.id.imageView2);
         TextView textView10 = view.findViewById(R.id.textView10);
         TextView textView12 = view.findViewById(R.id.textView12);
+
         root = FirebaseDatabase.getInstance().getReference();
 
         ArrayList<String>  titleList = new ArrayList<String>();
@@ -74,7 +75,7 @@ public class RTDFragment extends Fragment {
                 int count = 0; // Counter to limit to the first 5 posts
                 ArrayList<String> combinedItems = new ArrayList<>();
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    if (count < 10) {
+                    if (count < 10) { //limit output
                         content = postSnapshot.child("content").getValue(String.class);
                         title = postSnapshot.child("title").getValue(String.class);
                         postId = postSnapshot.getKey();

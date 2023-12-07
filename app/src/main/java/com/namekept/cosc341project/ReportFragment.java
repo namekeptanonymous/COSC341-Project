@@ -27,7 +27,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class ReportFragment extends Fragment {
 
-    private ListView listView;
     private View fragmentView;
     private ArrayAdapter<Report> adapter;
     private DatabaseReference root;
@@ -60,7 +59,7 @@ public class ReportFragment extends Fragment {
         ArrayList<String> reqListContent = new ArrayList<>();
         ArrayList<String> reqIdList = new ArrayList<>();
 
-        listView = view.findViewById(R.id.Reports);
+        ListView listView = view.findViewById(R.id.Reports);
 
         // Setup Firebase ValueEventListener
         root.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -79,9 +78,9 @@ public class ReportFragment extends Fragment {
                         reqIdList.add(postId);
                     }
                 }
-
+                Log.d("test", reqIdList.toString());
                 // Setup ArrayAdapter with simple_list_item_2 layout
-                ArrayAdapter<String> adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_2, android.R.id.text1, reqListTitle) {
+                ArrayAdapter<String> adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_2, android.R.id.text1, reqIdList) {
                     @Override
                     public View getView(int position, View convertView, ViewGroup parent) {
                         View view = super.getView(position, convertView, parent);
@@ -93,15 +92,34 @@ public class ReportFragment extends Fragment {
                         return view;
                     }
                 };
+
                 listView.setAdapter(adapter);
+                // handle click
+                AdapterView.OnItemClickListener reqClickedHandler = new AdapterView.OnItemClickListener() {
+                    public void onItemClick(AdapterView parent, View v, int position, long id) {
+                        String postId = reqIdList.get(position);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("postId", postId);
+                        NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_navigation_report_to_viewPostFragment, bundle);
+                    }
+                };
+                listView.setOnItemClickListener(reqClickedHandler);
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.w("Firebase", "loadPost:onCancelled", databaseError.toException());
             }
+
         });
 
+        FloatingActionButton addButton = view.findViewById(R.id.fab_add_report);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_navigation_report_to_addPostFragment);
+            }
+        });
 
 //        ImageView imageViewShare = view.findViewById(R.id.share);
 //        imageViewShare.setOnClickListener(new View.OnClickListener() {
@@ -111,66 +129,6 @@ public class ReportFragment extends Fragment {
 //            }
 //        });
 
-        FloatingActionButton addButton = view.findViewById(R.id.fab_add_report);
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_navigation_maps_to_addPostFragment);
-            }
-        });
-
-        root.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d("test",dataSnapshot.toString());
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    Report report = postSnapshot.getValue(Report.class); // Assuming Report is a model class with appropriate fields
-                    reportList.add(report);
-                    postId = postSnapshot.getKey();
-                    timestamp = postSnapshot.child("timestamp").getValue(Long.class);
-                    type = postSnapshot.child("type").getValue(String.class);
-                    title = postSnapshot.child("title").getValue(String.class);
-                    content = postSnapshot.child("content").getValue(String.class);
-                    location = postSnapshot.child("location").getValue(String.class);
-                    verifications = postSnapshot.child("verifications").getValue(Integer.class);
-                    if (type.equalsIgnoreCase("report")){
-                        reqListTitle.add(title);
-                        reqListContent.add(content);
-                        reqIdList.add(postId);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Log.e("Firebase", "Error: " + error.getMessage());
-
-            }
-        });
-        ArrayAdapter adapter = new ArrayAdapter(requireContext(), android.R.layout.simple_list_item_2, android.R.id.text1, reqListTitle) {
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                View view = super.getView(position, convertView, parent);
-                TextView text1 = (TextView) view.findViewById(android.R.id.text1);
-                TextView text2 = (TextView) view.findViewById(android.R.id.text2);
-
-                text1.setText(reqListTitle.get(position));
-                text2.setText(reqListContent.get(position));
-                return view;
-            }
-        };
-        listView.setAdapter(adapter);
-
-        // handle click
-        AdapterView.OnItemClickListener reqClickedHandler = new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView parent, View v, int position, long id) {
-//                String postId = reqIdList.get(position);
-//                Bundle bundle = new Bundle();
-//                bundle.putString("postId", postId);
-//                NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_navigation_community_to_viewPostFragment, bundle);
-            }
-        };
-        listView.setOnItemClickListener(reqClickedHandler);
     }
     private void showPopupMenu(View view, Report report) {
 //        PopupMenu popup = new PopupMenu(getContext(), view);
