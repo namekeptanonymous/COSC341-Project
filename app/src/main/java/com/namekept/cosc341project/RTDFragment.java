@@ -1,11 +1,18 @@
 package com.namekept.cosc341project;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
@@ -18,21 +25,29 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class RTDFragment extends Fragment {
 
     ListView listView;
     ImageView imageView2;
-
-
+    View fragmentView;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private FusedLocationProviderClient fusedLocationClient;
 
     private DatabaseReference root;
     @Override
@@ -43,7 +58,20 @@ public class RTDFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_r_t_d, container, false);
+        fragmentView = inflater.inflate(R.layout.fragment_r_t_d, container, false);
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
+
+        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(),
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST_CODE);
+        } else {
+            getLastKnownLocation();
+        }
+
+        return fragmentView;
     }
 
     private String content; private String title; private String postId;
@@ -145,5 +173,83 @@ public class RTDFragment extends Fragment {
                 startActivity(intent);
             }
         });
+    }
+
+    private void getLastKnownLocation() {
+        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(requireActivity(), new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                getAddressFromLocation(getContext(), location.getLatitude(), location.getLongitude());
+                            }
+                        }
+                    });
+        } else {
+            TextView locationField = fragmentView.findViewById(R.id.textView21);
+            locationField.setText("Location is off.");
+        }
+    }
+
+    private void getAddressFromLocation(Context context, double latitude, double longitude) {
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+
+            if (addresses != null && addresses.size() > 0) {
+                Address address = addresses.get(0);
+
+                // Get address details
+                String city = address.getLocality();
+                String state = getStateCode(address.getAdminArea());
+                // Construct the full address
+                String location = city + ", " + state;
+
+                TextView locationField = fragmentView.findViewById(R.id.textView21);
+                locationField.setText(location);
+            } else {
+                Toast.makeText(context, "No address found", Toast.LENGTH_SHORT).show();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String getStateCode(String fullStateName) {
+        // Method to convert full state name to state code (abbreviated form)
+        switch (fullStateName) {
+            // Canadian provinces
+            case "Alberta":
+                return "AB";
+            case "British Columbia":
+                return "BC";
+            case "Manitoba":
+                return "MB";
+            case "New Brunswick":
+                return "NB";
+            case "Newfoundland and Labrador":
+                return "NL";
+            case "Nova Scotia":
+                return "NS";
+            case "Ontario":
+                return "ON";
+            case "Prince Edward Island":
+                return "PE";
+            case "Quebec":
+                return "QC";
+            case "Saskatchewan":
+                return "SK";
+            case "Northwest Territories":
+                return "NT";
+            case "Nunavut":
+                return "NU";
+            case "Yukon":
+                return "YT";
+            default:
+                return ""; // Return empty string or handle unknown states as needed
+        }
     }
 }

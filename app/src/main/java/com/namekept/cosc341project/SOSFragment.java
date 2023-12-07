@@ -2,11 +2,21 @@ package com.namekept.cosc341project;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.os.BatteryManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
@@ -15,18 +25,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class SOSFragment extends Fragment {
 
     ConstraintLayout constraintLayout;
-
     Button button;
-
     TextView textView3;
-
-    TextView textView4;
-
     TextView textView5;
+    int batteryLevel;
+    View fragmentView;
+    double latitude;
+    double longitude;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private FusedLocationProviderClient fusedLocationClient;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,8 +56,21 @@ public class SOSFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_s_o_s, container, false);
+        fragmentView = inflater.inflate(R.layout.fragment_s_o_s, container, false);
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
+
+        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(),
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST_CODE);
+        } else {
+            getLastKnownLocation();
+        }
+
+
+        return fragmentView;
     }
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -48,8 +81,6 @@ public class SOSFragment extends Fragment {
         button = view.findViewById(R.id.button2);
 
         textView3 = view.findViewById(R.id.textView3);
-
-        textView4 = view.findViewById(R.id.textView4);
 
         textView5 = view.findViewById(R.id.textView5);
 
@@ -78,11 +109,51 @@ public class SOSFragment extends Fragment {
                     @Override
                     public void run() {
                         textView3.setVisibility(View.VISIBLE);
-                        textView4.setVisibility(View.VISIBLE);
                         textView5.setVisibility(View.VISIBLE);
                     }
                 }, 1500);
             }
         });
+    }
+
+    private void getLastKnownLocation() {
+        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(requireActivity(), new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                latitude = location.getLatitude();
+                                longitude = location.getLongitude();
+                                getAddressFromLocation(getContext(), latitude, longitude);
+                            }
+                        }
+                    });
+        } else {
+            textView5 = fragmentView.findViewById(R.id.textView5);
+            textView5.setText("Location is turned off.");
+        }
+    }
+
+    private void getAddressFromLocation(Context context, double latitude, double longitude) {
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+
+            if (addresses != null && addresses.size() > 0) {
+                Address address = addresses.get(0);
+
+                // Use the fullAddress as needed
+                textView5 = fragmentView.findViewById(R.id.textView5);
+                textView5.setText(address.getAddressLine(0));
+            } else {
+                // Handle no address found
+                Toast.makeText(context, "No address found", Toast.LENGTH_SHORT).show();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

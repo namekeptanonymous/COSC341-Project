@@ -3,21 +3,30 @@ package com.namekept.cosc341project;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -27,6 +36,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.ChildEventListener;
@@ -35,8 +45,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 
@@ -52,7 +65,9 @@ public class MapFragment extends Fragment {
     private LatLng postCoords = new LatLng(0,0);
     private Marker addedMarker; private Marker removedMarker;
     private HashMap<String, Marker> markerHashMap = new HashMap<>();
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private FusedLocationProviderClient fusedLocationClient;
+    private double latitude; private double longitude;
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
         @Override
@@ -65,9 +80,10 @@ public class MapFragment extends Fragment {
                 LatLng pin = new LatLng(Double.parseDouble(latlng[0]), Double.parseDouble(latlng[1]));
                 googleMap.moveCamera(CameraUpdateFactory.newLatLng(pin));
             } else {
-                googleMap.moveCamera(CameraUpdateFactory.zoomTo(10));
-                LatLng ubco = new LatLng(49.9394, -119.3948);
-                googleMap.moveCamera(CameraUpdateFactory.newLatLng(ubco));
+                googleMap.moveCamera(CameraUpdateFactory.zoomTo(11));
+                Log.d("test", latitude + "lat " + longitude + "long ");
+                LatLng initialLocation = new LatLng(latitude,longitude);
+                googleMap.moveCamera(CameraUpdateFactory.newLatLng(initialLocation));
             }
 
 
@@ -105,6 +121,16 @@ public class MapFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         fragmentView = inflater.inflate(R.layout.fragment_map, container, false);
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
+
+        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(),
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_PERMISSION_REQUEST_CODE);
+        } else {
+            getLastKnownLocation();
+        }
 
         return fragmentView;
     }
@@ -269,5 +295,24 @@ public class MapFragment extends Fragment {
                 dialog.show();
             }
         });
+    }
+
+    private void getLastKnownLocation() {
+        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(requireActivity(), new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            if (location != null) {
+                                latitude = location.getLatitude();
+                                longitude = location.getLongitude();
+                            }
+                        }
+                    });
+        } else {
+            latitude = 49.9394;
+            longitude = -119.3948;
+        }
     }
 }
