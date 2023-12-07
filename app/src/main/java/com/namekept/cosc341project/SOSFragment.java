@@ -134,12 +134,12 @@ public class SOSFragment extends Fragment {
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
                                 getAddressFromLocation(getContext(), latitude, longitude);
+                            } else {
+                                textView5 = fragmentView.findViewById(R.id.textView5);
+                                textView5.setText("Location is turned off.");
                             }
                         }
                     });
-        } else {
-            textView5 = fragmentView.findViewById(R.id.textView5);
-            textView5.setText("Location is turned off.");
         }
     }
 

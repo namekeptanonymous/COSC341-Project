@@ -307,12 +307,12 @@ public class MapFragment extends Fragment {
                             if (location != null) {
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
+                            } else {
+                                latitude = 49.9394;
+                                longitude = -119.3948;
                             }
                         }
                     });
-        } else {
-            latitude = 49.9394;
-            longitude = -119.3948;
         }
     }
 }
