@@ -48,9 +48,9 @@ public class ReportFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ArrayList<String> reqListTitle = new ArrayList<>();
-        ArrayList<String> reqListContent = new ArrayList<>();
-        ArrayList<String> reqIdList = new ArrayList<>();
+        ArrayList<String> titleList = new ArrayList<>();
+        ArrayList<String> contentList = new ArrayList<>();
+        ArrayList<String> idList = new ArrayList<>();
 
         ListView listView = view.findViewById(R.id.Reports);
 
@@ -65,21 +65,21 @@ public class ReportFragment extends Fragment {
                     String postId = postSnapshot.getKey();
 
                     if (type.equals("report")) {
-                        reqListTitle.add(title);
-                        reqListContent.add(content);
-                        reqIdList.add(postId);
+                        titleList.add(title);
+                        contentList.add(content);
+                        idList.add(postId);
                     }
                 }
 
-                ArrayAdapter<String> adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_2, android.R.id.text1, reqIdList) {
+                ArrayAdapter<String> adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_2, android.R.id.text1, idList) {
                     @Override
                     public View getView(int position, View convertView, ViewGroup parent) {
                         View view = super.getView(position, convertView, parent);
                         TextView text1 = view.findViewById(android.R.id.text1);
                         TextView text2 = view.findViewById(android.R.id.text2);
 
-                        text1.setText(reqListTitle.get(position));
-                        text2.setText(reqListContent.get(position));
+                        text1.setText(titleList.get(position));
+                        text2.setText(contentList.get(position));
                         return view;
                     }
                 };
@@ -87,7 +87,7 @@ public class ReportFragment extends Fragment {
                 listView.setAdapter(adapter);
                 AdapterView.OnItemClickListener reqClickedHandler = new AdapterView.OnItemClickListener() {
                     public void onItemClick(AdapterView parent, View v, int position, long id) {
-                        String postId = reqIdList.get(position);
+                        String postId = idList.get(position);
                         Bundle bundle = new Bundle();
                         bundle.putString("postId", postId);
                         NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_navigation_report_to_viewPostFragment, bundle);
