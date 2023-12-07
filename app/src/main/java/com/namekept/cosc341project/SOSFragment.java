@@ -84,7 +84,16 @@ public class SOSFragment extends Fragment {
 
         textView5 = view.findViewById(R.id.textView5);
 
-        Handler handler = new Handler();
+
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent batteryStatus = requireContext().registerReceiver(null, ifilter);
+        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+
+        float batteryPct = level * 100 / (float)scale;
+        textView3.setText((int) batteryPct + "%");
+        textView3.setVisibility(View.VISIBLE);
+        textView5.setVisibility(View.VISIBLE);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,20 +114,6 @@ public class SOSFragment extends Fragment {
 
                 // Start the color animation
                 colorAnimation.start();
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-                        Intent batteryStatus = requireContext().registerReceiver(null, ifilter);
-                        int level = batteryStatus.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-                        int scale = batteryStatus.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-
-                        float batteryPct = level * 100 / (float)scale;
-                        textView3.setText((int) batteryPct + "%");
-                        textView3.setVisibility(View.VISIBLE);
-                        textView5.setVisibility(View.VISIBLE);
-                    }
-                }, 400);
             }
         });
     }
@@ -133,6 +128,10 @@ public class SOSFragment extends Fragment {
                             if (location != null) {
                                 latitude = location.getLatitude();
                                 longitude = location.getLongitude();
+                                TextView latText = fragmentView.findViewById(R.id.lat);
+                                TextView longText = fragmentView.findViewById(R.id.longitude);
+                                latText.setText(latitude+"");
+                                longText.setText(longitude+"");
                                 getAddressFromLocation(getContext(), latitude, longitude);
                             } else {
                                 textView5 = fragmentView.findViewById(R.id.textView5);
