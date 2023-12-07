@@ -20,11 +20,8 @@ import android.widget.TextView;
 public class SOSFragment extends Fragment {
 
     ConstraintLayout constraintLayout;
-    ConstraintLayout constraintLayout1;
 
     Button button;
-
-    TextView info;
 
     TextView textView3;
 
@@ -40,12 +37,9 @@ public class SOSFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_s_o_s, container, false);
 
     }
-
-
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -61,7 +55,6 @@ public class SOSFragment extends Fragment {
         textView5 = view.findViewById(R.id.textView5);
 
         Handler handler = new Handler();
-
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,15 +83,7 @@ public class SOSFragment extends Fragment {
                         textView5.setVisibility(View.VISIBLE);
                     }
                 }, 1500);
-
             }
-
         });
     }
-
-
-
-
-
-
 }

@@ -74,7 +74,6 @@ public class CommunityFragment extends Fragment {
                         }
                 }
 
-                //display lists
                 ArrayAdapter adapter = new ArrayAdapter(requireContext(), android.R.layout.simple_list_item_2, android.R.id.text1, accListTitle) {
                     @Override
                     public View getView(int position, View convertView, ViewGroup parent) {
@@ -106,7 +105,6 @@ public class CommunityFragment extends Fragment {
                 ListView reqList = view.findViewById(R.id.requests);
                 reqList.setAdapter(adapter1);
 
-                // handle click
                 AdapterView.OnItemClickListener reqClickedHandler = new AdapterView.OnItemClickListener() {
                     public void onItemClick(AdapterView parent, View v, int position, long id) {
                         String postId = reqIdList.get(position);

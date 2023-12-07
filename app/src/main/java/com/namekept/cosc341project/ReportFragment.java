@@ -28,16 +28,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 public class ReportFragment extends Fragment {
 
     private View fragmentView;
-    private ArrayAdapter<Report> adapter;
     private DatabaseReference root;
     private List<Report> reportList;
-    private String postId;
-    private Long timestamp;
     private String type;
-    private String title;
-    private String content;
-    private String location;
-    private int verifications;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,7 +54,6 @@ public class ReportFragment extends Fragment {
 
         ListView listView = view.findViewById(R.id.Reports);
 
-        // Setup Firebase ValueEventListener
         root.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -78,8 +70,7 @@ public class ReportFragment extends Fragment {
                         reqIdList.add(postId);
                     }
                 }
-                Log.d("test", reqIdList.toString());
-                // Setup ArrayAdapter with simple_list_item_2 layout
+
                 ArrayAdapter<String> adapter = new ArrayAdapter(getActivity(), android.R.layout.simple_list_item_2, android.R.id.text1, reqIdList) {
                     @Override
                     public View getView(int position, View convertView, ViewGroup parent) {
@@ -94,7 +85,6 @@ public class ReportFragment extends Fragment {
                 };
 
                 listView.setAdapter(adapter);
-                // handle click
                 AdapterView.OnItemClickListener reqClickedHandler = new AdapterView.OnItemClickListener() {
                     public void onItemClick(AdapterView parent, View v, int position, long id) {
                         String postId = reqIdList.get(position);
@@ -120,45 +110,5 @@ public class ReportFragment extends Fragment {
                 NavHostFragment.findNavController(getParentFragment()).navigate(R.id.action_navigation_report_to_addPostFragment);
             }
         });
-
-//        ImageView imageViewShare = view.findViewById(R.id.share);
-//        imageViewShare.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//            }
-//        });
-
-    }
-    private void showPopupMenu(View view, Report report) {
-//        PopupMenu popup = new PopupMenu(getContext(), view);
-//        popup.setOnMenuItemClickListener(item -> {
-//            Log.d("test","in da menu");
-//            switch (item.getItemId()) {
-//                case R.id.edit:
-//                    // Navigate to the edit fragment, passing the selected report's data
-//                    Bundle editBundle = new Bundle();
-//                    editBundle.putString("reportId", report.getId());
-//                    NavHostFragment.findNavController(this)
-//                            .navigate(R.id.action_navigation_report_to_navigation_maps, editBundle);
-//                    return true;
-//                case R.id.share:
-//                    // Share report content via an intent
-//                    Intent shareIntent = new Intent(Intent.ACTION_SEND);
-//                    shareIntent.setType("text/plain");
-//                    shareIntent.putExtra(Intent.EXTRA_TEXT, report.getDescription());
-//                    startActivity(Intent.createChooser(shareIntent, "Share Report Using"));
-//                    return true;
-//                case R.id.delete:
-//                    // Delete the report from Firebase
-//                    databaseReference.child(report.getId()).removeValue();
-//                    reportList.remove(report);
-//                    adapter.notifyDataSetChanged();
-//                    return true;
-//                default:
-//                    return false;
-//            }
-//        });
-//        popup.show();
     }
 }

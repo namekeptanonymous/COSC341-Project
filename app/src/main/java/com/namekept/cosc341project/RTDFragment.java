@@ -37,11 +37,6 @@ public class RTDFragment extends Fragment {
 
 
     private DatabaseReference root;
-
-    public RTDFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +45,6 @@ public class RTDFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_r_t_d, container, false);
     }
 
@@ -84,14 +78,11 @@ public class RTDFragment extends Fragment {
                         contentList.add(content);
                         idList.add(postId);
 
-                        count++; // Increment the counter
+                        count++;
                     } else {
-                        break; // Break the loop after 5 posts
+                        break;
                     }
                 }
-
-
-
                 ArrayAdapter adapter = new ArrayAdapter(requireContext(), android.R.layout.simple_list_item_2, android.R.id.text1, titleList) {
                     @Override
                     public View getView(int position, View convertView, ViewGroup parent) {
@@ -123,11 +114,6 @@ public class RTDFragment extends Fragment {
                 Log.e("Firebase", "Error: " + databaseError.getMessage());
             }
         });
-
-
-
-//__________________________________________________________________________________________________________________________________________________
-
 
         imageView2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,17 +147,5 @@ public class RTDFragment extends Fragment {
                 startActivity(intent);
             }
         });
-//--------------------------------------------------------------------------------------------------
-
-        AdapterView.OnItemClickListener clickedHandler = new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView parent, View v, int position, long id) {
-                String selected = parent.getItemAtPosition(position).toString();
-            }
-        };
-        listView.setOnItemClickListener(clickedHandler);
-
-
-
-
     }
 }

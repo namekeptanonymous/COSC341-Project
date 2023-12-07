@@ -205,7 +205,6 @@ public class MapFragment extends Fragment {
                     addedMarker = map.addMarker(new MarkerOptions().position(postCoords).title(title));
                 }
                 markerHashMap.put(addPostId, addedMarker);
-                Log.d("Firebase", "markerHashMap: " + markerHashMap.toString());
             }
 
             @Override
